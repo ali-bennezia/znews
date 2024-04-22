@@ -1,6 +1,6 @@
 @ECHO OFF
 SETLOCAL
-echo "Compiling Znews..."
+echo "Building Znews..."
 
 CALL :TryDelete ".\build\znews-build"
 
@@ -11,9 +11,7 @@ CALL :TryMkDir ".\build"
 CALL :Overwrite ".\src\backend" ".\build\znews-build"
 CALL :Overwrite ".\config" ".\build\znews-build\config"
 CALL :Overwrite ".\src\ui\dist\ui" ".\build\znews-build\static"
-
-cd znews-build
-
+CALL :Overwrite ".\.env" ".\build\znews-build\.env"
 
 :TryMkDir
 if not exist "%~1" (

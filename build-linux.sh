@@ -1,6 +1,6 @@
 #! /bin/sh
 
-deleteFileIfExists()
+tryDelete()
 {
 	DEL_FILE="$1"
 	if [ -f "$DEL_FILE" ]; then
@@ -12,24 +12,43 @@ deleteFileIfExists()
 	rm $DEL_FLAGS "$DEL_FILE"
 }
 
-copyFileIfExists()
+tryCopy()
 {
+	CP_BASENAME=`basename "$1"`
+	CP_TARGETNAME="$3"
 	CP_FROM="$1"
 	CP_TO="$2"
+	mkdir -p "$2"
 	if [ -f "$CP_FROM" ]; then
 			CP_FLAGS="-f"
 		elif [ -d "$CP_FROM" ]; then
 			CP_FLAGS="-rf"
 		else return
 	fi
-	cp $CP_FLAGS "$CP_FROM" "$CP_TO"
+	cp $CP_FLAGS "$CP_FROM" "${CP_TO}"
+	if ! [ -z "$3" ]; then
+		mv "${CP_TO}/${CP_BASENAME}" "${CP_TO}/${CP_TARGETNAME}"
+	fi
 }
 
-overwriteFile()
+overwrite()
 {
 	OW_FROM="$1"
 	OW_TO="$2"
-	deleteFileIfExists "$OW_TO"
-	copyFileIfExists "$OW_FROM" "$OW_TO"
+	tryDelete "$OW_TO"
+	tryCopy "$OW_FROM" "$OW_TO"
 }
 
+echo "Building Znews..."
+
+mkdir -p "./build"
+tryDelete "./build/znews-build"
+
+cd ./src/ui
+ng build
+cd ./../..
+
+tryCopy "./config" "./build/znews-build"
+tryCopy "./src/backend" "./build" "znews-build"
+tryCopy "./src/ui/dist/ui" "./build/znews-build" "static"
+tryCopy "./.env" "./build/znews-build"
