@@ -33,4 +33,3 @@ overwriteFile()
 	copyFileIfExists "$OW_FROM" "$OW_TO"
 }
 
-overwriteFile "$1" "$2"
