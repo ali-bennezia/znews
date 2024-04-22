@@ -27,6 +27,7 @@ tryCopy()
 	fi
 	cp $CP_FLAGS "$CP_FROM" "${CP_TO}"
 	if ! [ -z "$3" ]; then
+		echo "${CP_TO}/${CP_BASENAME}" "${CP_TO}/${CP_TARGETNAME}"
 		mv "${CP_TO}/${CP_BASENAME}" "${CP_TO}/${CP_TARGETNAME}"
 	fi
 }
@@ -48,7 +49,7 @@ cd ./src/ui
 ng build
 cd ./../..
 
-tryCopy "./config" "./build/znews-build"
 tryCopy "./src/backend" "./build" "znews-build"
+tryCopy "./config" "./build/znews-build"
 tryCopy "./src/ui/dist/ui" "./build/znews-build" "static"
 tryCopy "./.env" "./build/znews-build"
