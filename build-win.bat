@@ -9,7 +9,12 @@ start /wait /min cmd /c "ng build"
 cd .\..\..
 CALL :TryMkDir ".\build"
 CALL :Overwrite ".\src\backend" ".\build\znews-build"
-CALL :Overwrite ".\config" ".\build\znews-build\config"
+
+CALL :TryMkDir ".\build\znews-build\config"
+CALL :Overwrite ".\config\config.json" ".\build\znews-build\config\config.json"
+CALL :Overwrite ".\config\backend-config.json" ".\build\znews-build\config\backend-config.json"
+
+CALL :TryDelete ".\build\znews-build\static"
 CALL :Overwrite ".\src\ui\dist\ui" ".\build\znews-build\static"
 CALL :Overwrite ".\.env" ".\build\znews-build\.env"
 
