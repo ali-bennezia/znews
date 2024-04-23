@@ -8,8 +8,6 @@ const initialization = require("./initialization.js");
 const app = express();
 const router = express.Router();
 
-require("./jobs/scrapJob.js");
-
 // config
 
 initialization.initialize();
@@ -47,3 +45,7 @@ mongoose
     console.error("Error! MongoDB database connection attempt failed.");
     console.error(err);
   });
+
+// jobs
+
+require("./jobs/scrapJob.js");

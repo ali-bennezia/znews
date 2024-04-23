@@ -6,7 +6,7 @@ const schema = new mongoose.Schema(
     lastChecked: { type: Date, required: true },
     selectors: [{ type: String, required: true }],
     fetchModes: [{ type: String, required: true }],
-    modifications: [{ type: String, required: true }],
+    modifiers: [{ type: String, required: true }],
   },
   { timestamps: true }
 );

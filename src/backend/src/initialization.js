@@ -1,4 +1,6 @@
 const dotenv = require("dotenv");
+const fileUtils = require("./utils/fileUtils");
+
 var configs = [];
 
 function loadConfig(identifier, data) {
@@ -34,6 +36,9 @@ exports.initialize = function () {
       process.env.NODE_ENV = "production";
       break;
   }
+
+  fileUtils.tryMkDirSync("images");
+  fileUtils.tryMkDirSync("static");
 
   const env = process.env.NODE_ENV || "development";
 
