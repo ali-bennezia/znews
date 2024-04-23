@@ -20,16 +20,22 @@ const assert = require("assert");
 const sourceModel = require("./../src/models/sourceModel.js");
 const newsModel = require("./../src/models/newsModel.js");
 
-async function dummyInsert() {
-  let s = await sourceModel.create({
+const fileUtils = require("./../src/utils/fileUtils.js");
+const newsUtils = require("./../src/utils/newsUtils.js");
+
+async function dummySourceInsert() {
+  return sourceModel.create({
     url: "Dummy url",
     lastChecked: new Date(),
     selectors: [],
     fetchModes: [],
     modifiers: [],
   });
+}
+
+async function dummyNewsInsert(source) {
   return newsModel.create({
-    source: s._id,
+    source: source._id,
     authors: [],
     title: "Dummy news",
     description: "Hello, World!",
@@ -38,9 +44,22 @@ async function dummyInsert() {
   });
 }
 
-async function dummyRemove() {
-  await newsModel.deleteOne({ title: "Dummy news" });
+async function dummySourceRemove() {
   return sourceModel.deleteOne({ url: "Dummy url" });
+}
+
+async function dummyNewsRemove() {
+  await newsModel.deleteOne({ title: "Dummy news" });
+}
+
+async function dummyInsert() {
+  let s = await dummySourceInsert();
+  return dummyNewsInsert(s);
+}
+
+async function dummyRemove() {
+  await dummyNewsRemove();
+  return dummySourceRemove();
 }
 
 describe("models", function () {
@@ -67,7 +86,8 @@ describe("models", function () {
       })
       .catch((e) => done(e));
   });
-  it("should correctly remove ", function (done) {
+
+  it("should correctly remove", function (done) {
     dummyRemove()
       .then(() => {
         sourceModel
@@ -89,6 +109,63 @@ describe("models", function () {
           });
       })
       .catch((e) => done(e));
+  });
+
+  it("should correctly register news with images", function (done) {
+    dummySourceInsert()
+      .then((s) => {
+        newsUtils
+          .registerNewsAsync(s._id, [], "Image dummy", "Hello, World!", [
+            "https://img-9gag-fun.9cache.com/photo/a3Q5VW5_460s.jpg",
+            "https://image.cnbcfm.com/api/v1/image/106964911-1635070875003-Xpeng_Flying_Car_.png",
+          ])
+          .then((dat) => {
+            let imgExists = dat.images.map((i) => fileUtils.imageExistsSync(i));
+            assert.equal(
+              imgExists.every((o) => o == true),
+              true
+            );
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      })
+      .catch((e) => {
+        done(e);
+      });
+  });
+
+  it("should correctly remove images tied to news", function (done) {
+    newsModel
+      .findOne({ title: "Image dummy" })
+      .then((news) => {
+        let imgs = news.images;
+
+        newsModel
+          .deleteOne({ _id: news._id })
+          .then(() => {
+            dummySourceRemove()
+              .then(() => {
+                assert.equal(
+                  imgs
+                    .map((i) => fileUtils.imageExistsSync(i))
+                    .every((b) => b == false),
+                  true
+                );
+                done();
+              })
+              .catch((err3) => {
+                done(err3);
+              });
+          })
+          .catch((err2) => {
+            done(err2);
+          });
+      })
+      .catch((err) => {
+        done(err);
+      });
   });
 
   after(function () {

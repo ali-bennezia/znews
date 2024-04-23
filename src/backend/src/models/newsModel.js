@@ -13,12 +13,20 @@ const schema = new mongoose.Schema(
   { timestamps: true }
 );
 
-schema.pre("remove", { document: true, query: false }, async function (next) {
-  for (let i of this.images) {
-    fileUtils.deleteImageSync(i);
-  }
+schema.pre(
+  ["deleteOne", "deleteMany"],
+  { document: false, query: true },
+  async function (next) {
+    let docs = await this.model.find(this.getFilter());
 
-  next();
-});
+    for (let doc of docs) {
+      for (let i of doc.images) {
+        fileUtils.deleteImageSync(i);
+      }
+    }
+
+    next();
+  }
+);
 
 module.exports = mongoose.model("news", schema);
