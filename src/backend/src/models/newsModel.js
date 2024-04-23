@@ -4,6 +4,7 @@ const fileUtils = require("./../utils/fileUtils");
 const schema = new mongoose.Schema(
   {
     source: { type: mongoose.Types.ObjectId, ref: "source", required: true },
+    url: { type: String, required: true, unique: true },
     authors: [{ type: String, required: true }],
     title: { type: String, required: true },
     description: { type: String, required: true },

@@ -36,6 +36,7 @@ async function dummySourceInsert() {
 async function dummyNewsInsert(source) {
   return newsModel.create({
     source: source._id,
+    url: "Dummy news URL!",
     authors: [],
     title: "Dummy news",
     description: "Hello, World!",
