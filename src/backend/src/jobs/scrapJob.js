@@ -15,6 +15,4 @@ module.exports = schedule.scheduleJob("* */30 * * * *", async function () {
     sourceUtils.fetchSourceNewsAsync(s._id);
     ++i;
   }
-
-  console.log("test");
 });

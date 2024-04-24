@@ -1,0 +1,52 @@
+{
+  "sources": [
+    {
+      "name": "News API",
+      "identifier": "newsapi",
+      "url": "https://newsapi.org/v2/top-headlines?country=fr",
+      "country": "fr",
+      "tags": ["Misc", "France"],
+      "sourceType": "api%get",
+      "newsPointer": "json%articles",
+      "selectors": [
+        "json%author",
+        "json%title",
+        "json%description",
+        "json%url",
+        "json%urlToImage"
+      ],
+      "fetchNames": ["authors", "title", "description", "url", "images"],
+      "modifiers": [
+        "wrapInArray",
+        "emptyIfNull",
+        "emptyIfNull",
+        "emptyIfNull",
+        "wrapInArray"
+      ]
+    },
+    {
+      "name": "Sky News",
+      "identifier": "skynews",
+      "url": "https://news.sky.com/",
+      "country": "uk",
+      "tags": ["Misc"],
+      "sourceType": "page",
+      "newsPointer": "page%div.ui-story-wrap",
+      "selectors": [
+        "none-array",
+        "dom-content%div.ui-story-headline > a",
+        "none",
+        "dom-attrib%div.ui-story-headline > a%href",
+        "dom-attrib%img.ui-story-image%src"
+      ],
+      "fetchNames": ["authors", "title", "description", "url", "images"],
+      "modifiers": [
+        "none",
+        "emptyIfNull",
+        "emptyIfNull",
+        "emptyIfNull",
+        "wrapInArray"
+      ]
+    }
+  ]
+}
