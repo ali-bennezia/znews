@@ -4,7 +4,7 @@ const stringUtils = require("./../utils/stringUtils");
 
 async function getSourceApiKeyAsync(source) {
   let internalIdentifier = source.identifier;
-  let varName = `APIKEY${internalIdentifier}`;
+  let varName = `SOURCEPARAM${internalIdentifier}`;
   if (process.env[varName]) {
     let data = process.env[varName].split("%");
     return {
@@ -18,6 +18,7 @@ async function getSourceApiKeyAsync(source) {
 
 const schema = new mongoose.Schema(
   {
+    sourceParams: [{ type: String, required: false }],
     name: { type: String, required: true, unique: true },
     identifier: { type: String, required: true, unique: true },
     url: { type: String, required: true, unique: true },
@@ -50,8 +51,15 @@ schema.pre("save", async function () {
     if (apiKeyData) {
       let varKey = apiKeyData.value;
       let targetParamName = apiKeyData.paramName;
-      p.append(targetParamName, varKey);
-      this.url = `${stringUtils.getUrlWithoutParams(this.url)}?${p.toString()}`;
+      if (!this.sourceParams || !this.sourceParams.includes(targetParamName)) {
+        p.append(targetParamName, varKey);
+        this.url = `${stringUtils.getUrlWithoutParams(
+          this.url
+        )}?${p.toString()}`;
+        this.sourceParams = this.sourceParams
+          ? [...this.sourceParams, targetParamName]
+          : [targetParamName];
+      }
     }
   }
 });
