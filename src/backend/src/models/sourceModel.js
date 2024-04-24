@@ -1,8 +1,25 @@
 const mongoose = require("mongoose");
 
+const stringUtils = require("./../utils/stringUtils");
+
+async function getSourceApiKeyAsync(source) {
+  let internalIdentifier = source.identifier;
+  let varName = `APIKEY${internalIdentifier}`;
+  if (process.env[varName]) {
+    let data = process.env[varName].split("%");
+    return {
+      paramName: data[0],
+      value: data[1],
+    };
+  } else {
+    return null;
+  }
+}
+
 const schema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
+    identifier: { type: String, required: true, unique: true },
     url: { type: String, required: true, unique: true },
     country: { type: String, required: true },
     tags: [{ type: String, required: true }],
@@ -19,10 +36,24 @@ const schema = new mongoose.Schema(
       },
     ],
     modifiers: [
-      { type: String, required: true }, //["trimBegin", "trimEnd", "wrapInArray"], example: trimBegin%Show HN: %wrapInArray
+      { type: String, required: true }, //["trimBegin", "trimEnd", "wrapInArray", "emptyIfNull"], example: trimBegin%Show HN: %wrapInArray
     ],
   },
   { timestamps: true }
 );
+
+schema.pre("save", async function () {
+  if (this.isModified("url")) {
+    let params = stringUtils.extractParamsFromUrl(this.url);
+    let p = new URLSearchParams(params);
+    let apiKeyData = await getSourceApiKeyAsync(this);
+    if (apiKeyData) {
+      let varKey = apiKeyData.value;
+      let targetParamName = apiKeyData.paramName;
+      p.append(targetParamName, varKey);
+      this.url = `${stringUtils.getUrlWithoutParams(this.url)}?${p.toString()}`;
+    }
+  }
+});
 
 module.exports = mongoose.model("source", schema);

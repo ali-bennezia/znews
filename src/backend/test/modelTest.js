@@ -5,7 +5,7 @@ initialization.initialize();
 const backEndCfg = initialization.getConfig("backend");
 
 mongoose
-  .connect(backEndCfg.databaseUrl)
+  .connect(backEndCfg.testDatabaseUrl)
   .then((data) => {
     console.log("Database link succesfully established for tests.");
     run();
@@ -22,11 +22,19 @@ const newsModel = require("./../src/models/newsModel.js");
 
 const fileUtils = require("./../src/utils/fileUtils.js");
 const newsUtils = require("./../src/utils/newsUtils.js");
+const sourceUtils = require("./../src/utils/sourceUtils.js");
 
 async function dummySourceInsert() {
   return sourceModel.create({
+    name: "Dummy source",
+    identifier: "dummysource",
     url: "Dummy url",
+    country: "fr",
+    tags: ["Misc", "Science & Technology"],
+
+    sourceType: "api%get",
     lastChecked: new Date(),
+    newsPointer: "json%news",
     selectors: [],
     fetchModes: [],
     modifiers: [],
@@ -43,6 +51,50 @@ async function dummyNewsInsert(source) {
     images: [],
     tags: [],
   });
+}
+
+async function dummyAPISourceInsertAndFetch() {
+  let s = await newsUtils.tryRegisterSourceAsync(
+    "News API",
+    "newsapi",
+    "https://newsapi.org/v2/top-headlines?country=fr",
+    "fr",
+    ["Recent events", "Misc"],
+    "api%get",
+    "json%articles",
+    [
+      "json%author",
+      "json%title",
+      "json%description",
+      "json%url",
+      "json%urlToImage",
+    ],
+    ["authors", "title", "description", "url", "images"],
+    ["wrapInArray", "emptyIfNull", "emptyIfNull", "emptyIfNull", "wrapInArray"]
+  );
+  return sourceUtils.fetchSourceNewsAsync(s._id);
+}
+
+async function dummyPageSourceInsertAndFetch() {
+  let s = await newsUtils.tryRegisterSourceAsync(
+    "Sky News",
+    "skynews",
+    "https://news.sky.com/",
+    "uk",
+    ["Recent events", "Misc"],
+    "page",
+    "page%div.ui-story-wrap",
+    [
+      "none-array",
+      "dom-content%div.ui-story-headline > a",
+      "none",
+      "dom-attrib%div.ui-story-headline > a%href",
+      "dom-attrib%img.ui-story-image%src",
+    ],
+    ["authors", "title", "description", "url", "images"],
+    ["none", "emptyIfNull", "emptyIfNull", "emptyIfNull", "wrapInArray"]
+  );
+  return await sourceUtils.fetchSourceNewsAsync(s._id);
 }
 
 async function dummySourceRemove() {
@@ -64,6 +116,16 @@ async function dummyRemove() {
 }
 
 describe("models", function () {
+  before(function (done) {
+    fileUtils.setImageStorageFileName(
+      initialization.getConfig("backend").testImageStorage
+    );
+    newsUtils
+      .clearSourceAndNewsAsync()
+      .then(() => done())
+      .catch((e) => done(e));
+  });
+
   it("should correctly insert", function (done) {
     dummyInsert()
       .then(() => {
@@ -116,12 +178,21 @@ describe("models", function () {
     dummySourceInsert()
       .then((s) => {
         newsUtils
-          .registerNewsAsync(s._id, [], "Image dummy", "Hello, World!", [
-            "https://img-9gag-fun.9cache.com/photo/a3Q5VW5_460s.jpg",
-            "https://image.cnbcfm.com/api/v1/image/106964911-1635070875003-Xpeng_Flying_Car_.png",
-          ])
+          .tryRegisterNewsAsync(
+            s._id,
+            "http://my-news.org",
+            [],
+            "Image dummy",
+            "Hello, World!",
+            [
+              "https://img-9gag-fun.9cache.com/photo/a3Q5VW5_460s.jpg",
+              "https://image.cnbcfm.com/api/v1/image/106964911-1635070875003-Xpeng_Flying_Car_.png",
+            ]
+          )
           .then((dat) => {
-            let imgExists = dat.images.map((i) => fileUtils.imageExistsSync(i));
+            let imgExists = dat.images
+              ? dat.images.map((i) => fileUtils.imageExistsSync(i))
+              : [];
             assert.equal(
               imgExists.every((o) => o == true),
               true
@@ -150,8 +221,10 @@ describe("models", function () {
               .then(() => {
                 assert.equal(
                   imgs
-                    .map((i) => fileUtils.imageExistsSync(i))
-                    .every((b) => b == false),
+                    ? imgs
+                        .map((i) => fileUtils.imageExistsSync(i))
+                        .every((b) => b == false)
+                    : true,
                   true
                 );
                 done();
@@ -169,7 +242,50 @@ describe("models", function () {
       });
   });
 
-  after(function () {
-    mongoose.connection.close();
+  describe("API and page sources", function () {
+    beforeEach(function (done) {
+      newsUtils
+        .clearSourceAndNewsAsync()
+        .then(() => done())
+        .catch((e) => done(e));
+    });
+
+    it("should create API news source, and correctly fetch its data", function (done) {
+      dummyAPISourceInsertAndFetch()
+        .then(() => {
+          newsModel
+            .countDocuments({})
+            .then((c) => {
+              assert.equal(c > 0, true);
+              done();
+            })
+            .catch((err2) => done(err2));
+        })
+        .catch((err) => done(err));
+    });
+
+    it("should create page news source, and correctly fetch its data", function (done) {
+      dummyPageSourceInsertAndFetch()
+        .then(() => {
+          newsModel
+            .countDocuments({})
+            .then((c) => {
+              assert.equal(c > 0, true);
+              done();
+            })
+            .catch((err2) => done(err2));
+        })
+        .catch((err) => done(err));
+    });
+  });
+
+  after(function (done) {
+    newsUtils
+      .clearSourceAndNewsAsync()
+      .then(() => {
+        mongoose.connection.close();
+        done();
+      })
+      .catch((e) => done(e));
   });
 });

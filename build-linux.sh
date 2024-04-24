@@ -53,6 +53,8 @@ tryCopy "./src/backend" "./build" "znews-build"
 mkdir -p "./build/znews-build/config"
 tryCopy "./config/config.json" "./build/znews-build/config"
 tryCopy "./config/backend-config.json" "./build/znews-build/config"
+tryCopy "./config/backend-.env" "./build/znews-build" ".env"
+
 
 tryDelete "./build/znews-build/static"
 tryCopy "./src/ui/dist/ui" "./build/znews-build" "static"

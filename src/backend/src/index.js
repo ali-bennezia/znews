@@ -24,6 +24,7 @@ router.get("*", (req, res) => {
 });
 
 app.use("", express.static("./static"));
+app.use("images", express.static("./" + backEndCfg.imageSource));
 app.use(router);
 
 // runtime
@@ -49,3 +50,32 @@ mongoose
 // jobs
 
 require("./jobs/scrapJob.js");
+
+// debug
+
+const sourceUtils = require("./utils/sourceUtils.js");
+const newsUtils = require("./utils/newsUtils.js");
+
+async function dummyPageSourceInsertAndFetch() {
+  await newsUtils.clearSourceAndNewsAsync();
+  let s = await newsUtils.tryRegisterSourceAsync(
+    "Sky News",
+    "skynews",
+    "https://news.sky.com/",
+    "uk",
+    ["Recent events", "Misc"],
+    "page",
+    "page%div.ui-story-wrap",
+    [
+      "none-array",
+      "dom-content%div.ui-story-headline > a",
+      "none",
+      "dom-attrib%div.ui-story-headline > a%href",
+      "dom-attrib%img.ui-story-image%src",
+    ],
+    ["authors", "title", "description", "url", "images"],
+    ["none", "emptyIfNull", "emptyIfNull", "emptyIfNull", "wrapInArray"]
+  );
+  return sourceUtils.fetchSourceNewsAsync(s._id);
+}
+//dummyPageSourceInsertAndFetch();

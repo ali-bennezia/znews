@@ -10,51 +10,36 @@ const sourceUtils = require("./sourceUtils");
 
 async function tryRegisterSourceAsync(
   name,
+  identifier,
   url,
   country,
   tags,
+
   sourceType,
+  newsPointer,
   selectors,
   fetchNames,
-  fetchModes,
   modifiers
 ) {
-  if (await sourceModel.exists({ url: url })) return;
-  return sourceModel.create({
+  let s = await sourceModel.exists({ url: url });
+  if (s) return s;
+  return await sourceModel.create({
     name: name,
+    identifier: identifier,
     url: url,
     country: country,
     tags: tags,
     sourceType: sourceType,
     lastChecked: new Date(),
+    newsPointer: newsPointer,
     selectors: selectors,
     fetchNames: fetchNames,
-    fetchModes: fetchModes,
     modifiers: modifiers,
   });
 }
 exports.tryRegisterSourceAsync = tryRegisterSourceAsync;
 
-async function fetchNewsFromSourceAsync(sourceId) {
-  let source = await sourceModel.findById(sourceId);
-  source.lastChecked = new Date();
-  await source.save();
-
-  let typeData = source.sourceType.split("%");
-  switch (typeData[0]) {
-    case "api":
-      break;
-    case "page":
-      break;
-    default:
-      break;
-  }
-
-  // TODO
-}
-exports.fetchNewsFromSourceAsync = fetchNewsFromSourceAsync;
-
-async function registerNewsAsync(
+async function tryRegisterNewsAsync(
   sourceId,
   url,
   authors,
@@ -63,6 +48,9 @@ async function registerNewsAsync(
   imageExternalURLs,
   tags
 ) {
+  let n = await newsModel.find().or([{ title: title }, { url: url }]);
+  if (n.length > 0) return n[0];
+
   let imageNames = await Promise.all(
     imageExternalURLs.map(async (i) => {
       let ext = stringUtils.getUriExtension(i);
@@ -73,7 +61,7 @@ async function registerNewsAsync(
     })
   );
 
-  return newsModel
+  return await newsModel
     .create({
       source: sourceId,
       url: url,
@@ -87,7 +75,7 @@ async function registerNewsAsync(
       fileUtils.deleteImagesSync(imageNames);
     });
 }
-exports.registerNewsAsync = registerNewsAsync;
+exports.tryRegisterNewsAsync = tryRegisterNewsAsync;
 
 async function clearSourceAndNewsAsync() {
   await sourceModel.deleteMany({});

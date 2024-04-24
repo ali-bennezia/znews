@@ -4,6 +4,17 @@ const path = require("path");
 const stringUtils = require("./stringUtils");
 const request = require("request");
 const zlib = require("zlib");
+const initialization = require("./../initialization");
+
+function setImageStorageFileName(val) {
+  initialization.getConfig("backend").imageStorage = val;
+}
+exports.setImageStorageFileName = setImageStorageFileName;
+
+function getImageStorageFileName() {
+  return initialization.getConfig("backend").imageStorage;
+}
+exports.getImageStorageFileName = getImageStorageFileName;
 
 function tryMkDirSync(path) {
   if (!fs.existsSync(path)) {
@@ -18,7 +29,7 @@ function downloadImageAsync(url, targetNameWithoutExtension) {
 
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(
-      path.resolve(process.cwd(), "images", name)
+      path.resolve(process.cwd(), getImageStorageFileName(), name)
     );
 
     const headers = {
@@ -38,12 +49,14 @@ function downloadImageAsync(url, targetNameWithoutExtension) {
 exports.downloadImageAsync = downloadImageAsync;
 
 function imageExistsSync(name) {
-  return fs.existsSync(path.resolve(process.cwd(), "images", name));
+  return fs.existsSync(
+    path.resolve(process.cwd(), getImageStorageFileName(), name)
+  );
 }
 exports.imageExistsSync = imageExistsSync;
 
 function deleteImageSync(name) {
-  fs.rmSync(path.resolve(process.cwd(), "images", name));
+  fs.rmSync(path.resolve(process.cwd(), getImageStorageFileName(), name));
 }
 exports.deleteImageSync = deleteImageSync;
 

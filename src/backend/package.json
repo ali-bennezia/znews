@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive --exit --delay --delayed",
+    "test": "mocha --recursive --exit --delay --delayed --timeout 5000",
     "start": "node ./src/index.js prod",
     "dev": "nodemon ./src/index.js dev"
   },

@@ -1,6 +1,8 @@
 function objectHasAllPropertiesSync(object, properties) {
-  for (let p in properties) {
-    if (!(p in object)) return false;
+  for (let p of properties) {
+    if (!(p in object)) {
+      return false;
+    }
   }
   return true;
 }

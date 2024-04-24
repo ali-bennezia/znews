@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 const fileUtils = require("./utils/fileUtils");
+const path = require("path");
 
 var configs = [];
 
@@ -37,13 +38,19 @@ exports.initialize = function () {
       break;
   }
 
-  fileUtils.tryMkDirSync("images");
   fileUtils.tryMkDirSync("static");
 
   const env = process.env.NODE_ENV || "development";
 
   console.log("Current detected environment: " + env);
-  dotenv.config();
+
+  if (env == "development") {
+    dotenv.config({
+      path: path.resolve(process.cwd(), "..", "..", "config", "backend-.env"),
+    });
+  } else {
+    dotenv.config();
+  }
 
   const cfg = require(env == "production"
     ? "./../config/config.json"
@@ -51,6 +58,9 @@ exports.initialize = function () {
   const bCfg = require(env == "production"
     ? "./../config/backend-config.json"
     : "./../../../config/backend-config.json");
+
+  fileUtils.tryMkDirSync(bCfg.imageStorage);
+  fileUtils.tryMkDirSync(bCfg.testImageStorage);
 
   loadConfig("main", cfg);
   loadConfig("backend", bCfg);
@@ -64,5 +74,6 @@ exports.initialize = function () {
     console.log("--");
   }
   console.log("==");
+
   return cfg;
 };

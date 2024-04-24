@@ -13,6 +13,7 @@ CALL :Overwrite ".\src\backend" ".\build\znews-build"
 CALL :TryMkDir ".\build\znews-build\config"
 CALL :Overwrite ".\config\config.json" ".\build\znews-build\config\config.json"
 CALL :Overwrite ".\config\backend-config.json" ".\build\znews-build\config\backend-config.json"
+CALL :Overwrite ".\config\backend-.env" ".\build\znews-build\.env"
 
 CALL :TryDelete ".\build\znews-build\static"
 CALL :Overwrite ".\src\ui\dist\ui" ".\build\znews-build\static"

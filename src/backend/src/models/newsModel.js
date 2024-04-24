@@ -3,13 +3,18 @@ const fileUtils = require("./../utils/fileUtils");
 
 const schema = new mongoose.Schema(
   {
-    source: { type: mongoose.Types.ObjectId, ref: "source", required: true },
-    url: { type: String, required: true, unique: true },
+    source: {
+      type: mongoose.Types.ObjectId,
+      ref: "source",
+      required: true,
+      unique: false,
+    },
+    url: { type: String, required: true, unique: false },
     authors: [{ type: String, required: true }],
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    images: [{ type: String, required: true }],
-    tags: [{ type: String, required: true }],
+    title: { type: String, required: true, unique: true },
+    description: { type: String, required: false, unique: false },
+    images: [{ type: String, required: false }],
+    tags: [{ type: String, required: false }],
   },
   { timestamps: true }
 );
