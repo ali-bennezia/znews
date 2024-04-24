@@ -21,8 +21,10 @@ async function tryRegisterSourceAsync(
   fetchNames,
   modifiers
 ) {
-  let s = await sourceModel.exists({ url: url });
-  if (s) return s;
+  let s = await sourceModel.find({
+    $or: [{ identifier: identifier }, { name: name }, { url: url }],
+  });
+  if (s.length > 0) return s[0];
   return await sourceModel.create({
     name: name,
     identifier: identifier,

@@ -342,7 +342,8 @@ exports.fetchPageNewsAsync = fetchPageNewsAsync;
 
 async function fetchSourceNewsAsync(sourceId) {
   let sourceDocument = await sourceModel.findById(sourceId);
-  sourceDocument.lastChecked = new Date();
+  if (sourceDocument == null) return [];
+  sourceDocument.lastChecked = Date.now();
   await sourceDocument.save();
   let typeData = sourceDocument.sourceType.split("%");
   let data = null;

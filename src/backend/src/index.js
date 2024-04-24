@@ -50,11 +50,52 @@ mongoose
 // jobs
 
 require("./jobs/scrapJob.js");
+require("./jobs/gcJob.js");
 
-// debug
+// sources
 
 const sourceUtils = require("./utils/sourceUtils.js");
 const newsUtils = require("./utils/newsUtils.js");
+
+newsUtils.tryRegisterSourceAsync(
+  "Sky News",
+  "skynews",
+  "https://news.sky.com/",
+  "uk",
+  ["Recent events", "Misc"],
+  "page",
+  "page%div.ui-story-wrap",
+  [
+    "none-array",
+    "dom-content%div.ui-story-headline > a",
+    "none",
+    "dom-attrib%div.ui-story-headline > a%href",
+    "dom-attrib%img.ui-story-image%src",
+  ],
+  ["authors", "title", "description", "url", "images"],
+  ["none", "emptyIfNull", "emptyIfNull", "emptyIfNull", "wrapInArray"]
+);
+
+newsUtils.tryRegisterSourceAsync(
+  "News API",
+  "newsapi",
+  "https://newsapi.org/v2/top-headlines?country=fr",
+  "fr",
+  ["Recent events", "Misc"],
+  "api%get",
+  "json%articles",
+  [
+    "json%author",
+    "json%title",
+    "json%description",
+    "json%url",
+    "json%urlToImage",
+  ],
+  ["authors", "title", "description", "url", "images"],
+  ["wrapInArray", "emptyIfNull", "emptyIfNull", "emptyIfNull", "wrapInArray"]
+);
+
+// debug
 
 async function dummyPageSourceInsertAndFetch() {
   await newsUtils.clearSourceAndNewsAsync();

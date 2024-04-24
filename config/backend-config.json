@@ -3,5 +3,7 @@
   "databaseUrl": "mongodb://localhost:27017/mydb",
   "testDatabaseUrl": "mongodb://localhost:27017/testmydb",
   "imageStorage": "images",
-  "testImageStorage": "test-images"
+  "testImageStorage": "test-images",
+  "daysAfterNewsDeletion": 30,
+  "sourceFetchBatchSize": 5
 }
