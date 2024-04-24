@@ -6,7 +6,6 @@ const newsModel = require("./../models/newsModel");
 
 const fileUtils = require("./fileUtils");
 const stringUtils = require("./stringUtils");
-const sourceUtils = require("./sourceUtils");
 
 async function tryRegisterSourceAsync(
   name,

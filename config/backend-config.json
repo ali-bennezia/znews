@@ -1,5 +1,6 @@
 {
-  "port": 5000,
+  "httpPort": 5000,
+  "webSocketPort": 3000,
   "databaseUrl": "mongodb://localhost:27017/mydb",
   "testDatabaseUrl": "mongodb://localhost:27017/testmydb",
   "imageStorage": "images",

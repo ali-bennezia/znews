@@ -1,5 +1,5 @@
-const sourceModel = require("./../models/sourceModel");
-const newsModel = require("./../models/newsModel");
+const sourceModel = require("../models/sourceModel");
+const newsModel = require("../models/newsModel");
 
 const axios = require("axios");
 const puppeteer = require("puppeteer");

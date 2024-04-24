@@ -3,10 +3,11 @@
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
+const wsExpress = require("websocket-express");
 const initialization = require("./initialization.js");
 
 const app = express();
-const router = express.Router();
+const wsApp = new wsExpress.WebSocketExpress();
 
 // config
 
@@ -19,28 +20,40 @@ const PORT = backEndCfg.port ?? 5000;
 
 // static files
 
-router.get("*", (req, res) => {
+const contentRouter = express.Router();
+contentRouter.get("*", (req, res) => {
   res.sendFile(path.resolve(process.cwd(), "static", "index.html"));
 });
 
+// HTTP routing
+
 app.use("", express.static("./static"));
 app.use("images", express.static("./" + backEndCfg.imageSource));
-app.use(router);
+app.use(contentRouter);
+
+// WS routing
+
+wsApp.use("/news", require("./routing/newsRouting.js"));
 
 // runtime
+
+const wsServer = wsApp.createServer();
 
 mongoose
   .connect(backEndCfg.databaseUrl)
   .then((data) => {
-    console.log("Database link succesfully established.");
+    console.log("Database link successfully established.");
     app.listen(PORT, function (err) {
       if (err) {
         console.error("Error! Application startup failed.");
         console.error(err);
         return;
       }
-      console.log("Application succesfully started.");
       initialization.initializeSources();
+      console.log("HTTP server successfully started.");
+      wsServer.listen(backEndCfg.webSocketPort, undefined, () => {
+        console.log("WebSocket secret successfully started.");
+      });
     });
   })
   .catch((err) => {

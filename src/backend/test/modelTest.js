@@ -22,7 +22,7 @@ const newsModel = require("./../src/models/newsModel.js");
 
 const fileUtils = require("./../src/utils/fileUtils.js");
 const newsUtils = require("./../src/utils/newsUtils.js");
-const sourceUtils = require("./../src/utils/sourceUtils.js");
+const dataUtils = require("./../src/utils/dataUtils.js");
 
 async function dummySourceInsert() {
   return sourceModel.create({
@@ -72,7 +72,7 @@ async function dummyAPISourceInsertAndFetch() {
     ["authors", "title", "description", "url", "images"],
     ["wrapInArray", "emptyIfNull", "emptyIfNull", "emptyIfNull", "wrapInArray"]
   );
-  return sourceUtils.fetchSourceNewsAsync(s._id);
+  return dataUtils.fetchSourceNewsAsync(s._id);
 }
 
 async function dummyPageSourceInsertAndFetch() {
@@ -94,7 +94,7 @@ async function dummyPageSourceInsertAndFetch() {
     ["authors", "title", "description", "url", "images"],
     ["none", "emptyIfNull", "emptyIfNull", "emptyIfNull", "wrapInArray"]
   );
-  return await sourceUtils.fetchSourceNewsAsync(s._id);
+  return await dataUtils.fetchSourceNewsAsync(s._id);
 }
 
 async function dummySourceRemove() {

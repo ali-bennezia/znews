@@ -1,7 +1,7 @@
 const schedule = require("node-schedule");
 
 const sourceModel = require("./../models/sourceModel");
-const sourceUtils = require("./../utils/sourceUtils");
+const dataUtils = require("../utils/dataUtils");
 
 const init = require("./../initialization");
 const bCfg = init.getConfig("backend");
@@ -12,7 +12,7 @@ module.exports = schedule.scheduleJob("* */30 * * * *", async function () {
   let i = 0;
   for (let s of sources) {
     if (i >= bCfg.sourceFetchBatchSize) break;
-    sourceUtils.fetchSourceNewsAsync(s._id);
+    dataUtils.fetchSourceNewsAsync(s._id);
     ++i;
   }
 });
