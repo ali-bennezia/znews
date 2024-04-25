@@ -6,5 +6,5 @@
   "imageStorage": "images",
   "testImageStorage": "test-images",
   "daysAfterNewsDeletion": 30,
-  "sourceFetchBatchSize": 5
+  "sourceFetchBatchSize": 2
 }

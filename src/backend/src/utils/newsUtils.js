@@ -6,6 +6,7 @@ const newsModel = require("./../models/newsModel");
 
 const fileUtils = require("./fileUtils");
 const stringUtils = require("./stringUtils");
+const sanitationUtils = require("./sanitationUtils");
 
 async function tryRegisterSourceAsync(
   name,
@@ -86,3 +87,87 @@ async function clearSourceAndNewsAsync() {
   await newsModel.deleteMany({});
 }
 exports.clearSourceAndNewsAsync = clearSourceAndNewsAsync;
+
+/*
+  options: {
+    query: ...,
+    count: ...,
+    sorting: {
+      sortBy: ...,
+      sortOrder: ...
+    },
+    timestamp: {
+      fromDate: ...,
+      timeFilter: ...
+    }
+  }
+*/
+async function getNewsAsync(opts) {
+  if (!opts) opts = {};
+  let optsCpy = sanitationUtils.trimOffAnyOtherPropertiesFromObjectSync(opts, [
+    "query",
+    "count",
+    "sorting",
+    "timestamp",
+  ]);
+
+  optsCpy.sorting = optsCpy?.sorting
+    ? sanitationUtils.trimOffAnyOtherPropertiesFromObjectSync(optsCpy.sorting, [
+        "sortBy",
+        "sortOrder",
+      ])
+    : undefined;
+
+  optsCpy.timestamp = optsCpy?.timestamp
+    ? sanitationUtils.trimOffAnyOtherPropertiesFromObjectSync(
+        optsCpy.timestamp,
+        ["fromDate", "timeFilter"]
+      )
+    : undefined;
+
+  let options = {
+    query: null,
+    count: 20,
+    sorting: {
+      sortBy: "createdAt",
+      sortOrder: 1,
+    },
+    timestamp: null,
+    ...optsCpy,
+  };
+
+  let timeFilter = {},
+    queryFilter = {},
+    sortFilter = {};
+
+  if (options?.timestamp?.fromDate && options?.timestamp?.timeFilter) {
+    let ts = options.timestamp.fromDate;
+    timeFilter =
+      options.timestamp.timeFilter == 1
+        ? { createdAt: { $gt: ts } }
+        : { createdAt: { $lt: ts } };
+  }
+
+  if (options?.query) {
+    queryFilter = { $text: { $search: options.query } };
+  }
+
+  if (options?.sorting?.sortBy && options?.sorting?.sortOrder) {
+    sortFilter[options.sorting.sortBy] = options.sorting.sortOrder;
+  }
+
+  console.log(timeFilter);
+  console.log(sortFilter);
+
+  let news = await newsModel
+    .find({
+      ...timeFilter,
+      ...queryFilter,
+    })
+    .sort(sortFilter)
+    .limit(options.count ? options.count : 20)
+    .exec();
+
+  return news;
+}
+exports.getNewsAsync = getNewsAsync;

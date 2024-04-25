@@ -1,5 +1,9 @@
 {
   "frontEndUrl": "",
-  "backEndUrl": "",
+  "backEndHttpUrl": "",
+  "backEndWSUrl": "",
+  "devFrontEndUrl": "http://localhost:4200",
+  "devBackEndHttpUrl": "http://localhost:5000",
+  "devBackEndWSUrl": "ws://localhost:3000",
   "version": "1.0"
 }

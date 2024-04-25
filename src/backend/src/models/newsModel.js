@@ -19,6 +19,8 @@ const schema = new mongoose.Schema(
   { timestamps: true }
 );
 
+schema.index({ title: "text", description: "text" });
+
 schema.pre(
   ["deleteOne", "deleteMany"],
   { document: false, query: true },
