@@ -53,10 +53,10 @@ contentRouter.get("*", (req, res) => {
 });
 
 // HTTP routing
-
+console.log(backEndCfg.imageStorage);
+app.use("/images", express.static("./" + backEndCfg.imageStorage));
 app.use("", express.static("./static"));
-app.use("images", express.static("./" + backEndCfg.imageSource));
-app.use(contentRouter);
+app.use("", contentRouter);
 
 // WS routing
 

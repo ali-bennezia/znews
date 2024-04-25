@@ -7,5 +7,5 @@ import { SearchService } from "src/app/api/search.service";
   styleUrls: ["./news-list.component.css"],
 })
 export class NewsListComponent {
-  constructor(private searchService: SearchService) {}
+  constructor(public searchService: SearchService) {}
 }

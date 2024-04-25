@@ -1,29 +1,37 @@
 <!--Article-->
-<div style="margin: 16px">
+<div style="margin: 16px" *ngIf="news" class="lg:max-w-full">
   <div class="max-w-sm w-full lg:max-w-full lg:flex">
     <div
-      class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
-      style="background-image: url('/assets/flowers.jpg')"
-      title="Roses"
+      class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t lg:rounded-l text-center overflow-hidden"
+      [style]="
+        'background-image: url(\'' +
+        getImageURLPrefix() +
+        news.images[0] +
+        '\')'
+      "
+      *ngIf="news.images.length > 0"
     ></div>
     <div
       class="border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal"
     >
       <div class="mb-8">
         <div class="text-gray-900 font-bold text-xl mb-2">
-          Can coffee make you a better developer?
+          {{ news.title }}
         </div>
-        <p class="text-gray-700 text-base">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus
-          quia, nulla! Maiores et perferendis eaque, exercitationem praesentium
-          nihil.
+        <p class="text-gray-700 text-base" *ngIf="news.description != ''">
+          {{ news.description }}
         </p>
       </div>
       <div class="flex items-center">
         <div class="text-sm">
-          <p class="text-gray-900 leading-none">Jonathan Reinink</p>
-          <p class="text-gray-600">Aug 18</p>
-          <p class="text-gray-400">Le Monde</p>
+          <p class="text-gray-900 leading-none">{{ news.authors }}</p>
+          <p class="text-gray-600">Fetched {{ news.createdAt | date }}</p>
+          <ng-container *ngIf="news.source">
+            <a [href]="news.source.url" class="text-gray-400">{{
+              news.source.name
+            }}</a>
+          </ng-container>
+          <p class="text-gray-400 leading-none">{{ news.tags.join(", ") }}</p>
         </div>
       </div>
     </div>

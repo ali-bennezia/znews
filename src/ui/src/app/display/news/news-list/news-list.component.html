@@ -7,9 +7,7 @@
     align-items: center;
   "
 >
-  <div style="width: 900px" class="border-b border-gray-400">
-    <p>Sort by ...</p>
-  </div>
-  <app-news></app-news>
+  <app-sort-menu></app-sort-menu>
+  <app-news *ngFor="let n of searchService.news" [news]="n"></app-news>
   <app-news></app-news>
 </div>

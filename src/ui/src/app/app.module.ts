@@ -9,6 +9,8 @@ import { AppRouterModule } from "./routing/app-router/app-router.module";
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
 import { NewsListComponent } from './display/news/news-list/news-list.component';
 import { NewsComponent } from './display/news/news/news.component';
+import { SortMenuComponent } from './display/news/sort-menu/sort-menu.component';
+import { DropdownButtonComponent } from './utils/dropdown-button/dropdown-button.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,8 @@ import { NewsComponent } from './display/news/news/news.component';
     ErrorPageComponent,
     NewsListComponent,
     NewsComponent,
+    SortMenuComponent,
+    DropdownButtonComponent,
   ],
   imports: [BrowserModule, AppRouterModule],
   providers: [],

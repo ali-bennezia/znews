@@ -127,6 +127,7 @@ async function getNewsAsync(opts) {
   let optsCpy = sanitationUtils.trimOffAnyOtherPropertiesFromObjectSync(opts, [
     "query",
     "source",
+    "sourceUrl",
     "country",
     "count",
     "sorting",
@@ -150,6 +151,7 @@ async function getNewsAsync(opts) {
   let options = {
     query: null,
     source: null,
+    sourceUrl: null,
     country: null,
     count: 20,
     sorting: {
@@ -175,6 +177,23 @@ async function getNewsAsync(opts) {
 
   if (options?.query) {
     queryFilter = { $text: { $search: options.query } };
+    let findSrcs = [];
+    if (options?.source) {
+      findSrcs.push(options.source);
+    }
+    if (options?.sourceUrl) {
+      let foundSrc = await sourceModel.findOne({ url: options?.sourceUrl });
+      if (foundSrc) findSrcs.push(foundSrc._id);
+    }
+    if (findSrcs.length == 1) {
+      queryFilter[source] = findSrcs[0];
+    } else if (findSrcs.length > 1) {
+      let multSourcesFilter = { $or: [] };
+      for (let iSrc of findSrcs) {
+        multSourcesFilter["$or"].push({ _id: iSrc });
+      }
+      queryFilter = { ...queryFilter, ...multSourcesFilter };
+    }
   }
 
   if (options?.country) {

@@ -1,0 +1,13 @@
+.dropdownElement:hover {
+  cursor: pointer;
+}
+
+.dropdownList {
+  left: 50%;
+  top: 54px;
+
+  transform: translateX(-50%);
+}
+
+.dropdownInteraction {
+}

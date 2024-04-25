@@ -59,7 +59,7 @@ async function formatNewsAsync(newsDocument) {
     description: newsDocument.description,
     images: newsDocument?.images
       ? newsDocument.images.map(
-          (i) => `${fileUtils.getImageStorageFileName()}/${i}`
+          (i) => `/${fileUtils.getImageStorageFileName()}/${i}`
         )
       : [],
     tags: newsDocument?.tags ? newsDocument.tags : [],

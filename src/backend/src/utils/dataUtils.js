@@ -333,6 +333,8 @@ async function fetchPageNewsAsync(sourceDocument) {
     page,
     processRawPageNewsDataAsync
   );
+  await page.close();
+  await browser.close();
   let results = await Promise.all(
     news.map(async (n) =>
       newsUtils.tryRegisterNewsAsync(

@@ -1,0 +1,26 @@
+<div
+  style="
+    max-width: 900px;
+    width: 80vw;
+    padding: 8px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  "
+  class="border-b border-gray-400"
+>
+  <app-dropdown-button
+    label="Sort By"
+    [choices]="['Date', 'Content', 'Source', 'Tags']"
+    [choiceValues]="['createdAt', 'content', 'source', 'tags']"
+    defaultChoice="Date"
+    [appendChoice]="true"
+  ></app-dropdown-button>
+  <app-dropdown-button
+    label="Order By"
+    [choices]="['Ascending', 'Descending']"
+    [choiceValues]="['1', '-1']"
+    defaultChoice="Ascending"
+    [appendChoice]="true"
+  ></app-dropdown-button>
+</div>
