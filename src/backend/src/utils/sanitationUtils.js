@@ -33,7 +33,6 @@ exports.trimOffAnyOtherPropertiesFromObjectSync =
 
 function formatSourceSync(sourceDocument) {
   return {
-    id: sourceDocument._id,
     identifier: sourceDocument.identifier,
     name: sourceDocument.name,
     url: sourceDocument.url,

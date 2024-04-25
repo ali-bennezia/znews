@@ -18,6 +18,31 @@ const mainCfg = initialization.getConfig("main");
 const backEndCfg = initialization.getConfig("backend");
 const PORT = backEndCfg.port ?? 5000;
 
+app.all("*", function (req, res, next) {
+  res.set(
+    "Access-Control-Allow-Origin",
+    process.env.NODE_ENV == "development"
+      ? mainCfg.devFrontEndUrl
+      : mainCfg.frontEndUrl
+  );
+  res.set("Access-Control-Allow-Methods", "OPTIONS, GET");
+  res.set("Access-Control-Allow-Headers", "Origin, Content-Type");
+  if (req.method == "OPTIONS") return res.sendStatus(200);
+  next();
+});
+
+wsApp.all("*", function (req, res, next) {
+  res.set(
+    "Access-Control-Allow-Origin",
+    process.env.NODE_ENV == "development"
+      ? mainCfg.devFrontEndUrl
+      : mainCfg.frontEndUrl
+  );
+
+  if (req.method == "OPTIONS") return res.sendStatus(200);
+  next();
+});
+
 // API
 
 // static files
