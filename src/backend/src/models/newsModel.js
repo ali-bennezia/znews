@@ -9,6 +9,11 @@ const schema = new mongoose.Schema(
       required: true,
       unique: false,
     },
+    sourceIdentifier: {
+      type: String,
+      required: true,
+      unique: false,
+    },
     url: { type: String, required: true, unique: false },
     authors: [{ type: String, required: true }],
     title: { type: String, required: true, unique: true },

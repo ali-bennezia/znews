@@ -7,6 +7,8 @@ import { AboutPageComponent } from "./pages/about-page/about-page.component";
 import { NavbarComponent } from "./layout/navbar/navbar.component";
 import { AppRouterModule } from "./routing/app-router/app-router.module";
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
+import { NewsListComponent } from './display/news/news-list/news-list.component';
+import { NewsComponent } from './display/news/news/news.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +17,8 @@ import { ErrorPageComponent } from './pages/error-page/error-page.component';
     AboutPageComponent,
     NavbarComponent,
     ErrorPageComponent,
+    NewsListComponent,
+    NewsComponent,
   ],
   imports: [BrowserModule, AppRouterModule],
   providers: [],

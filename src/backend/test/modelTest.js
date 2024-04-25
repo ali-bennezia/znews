@@ -44,6 +44,7 @@ async function dummySourceInsert() {
 async function dummyNewsInsert(source) {
   return newsModel.create({
     source: source._id,
+    sourceIdentifier: source.identifier,
     url: "Dummy news URL!",
     authors: [],
     title: "Dummy news",
@@ -180,6 +181,7 @@ describe("models", function () {
         newsUtils
           .tryRegisterNewsAsync(
             s._id,
+            s.identifier,
             "http://my-news.org",
             [],
             "Image dummy",

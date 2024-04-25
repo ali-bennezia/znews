@@ -46,6 +46,7 @@ exports.tryRegisterSourceAsync = tryRegisterSourceAsync;
 
 async function tryRegisterNewsAsync(
   sourceId,
+  sourceIdentifier,
   url,
   authors,
   title,
@@ -69,6 +70,7 @@ async function tryRegisterNewsAsync(
   return await newsModel
     .create({
       source: sourceId,
+      sourceIdentifier: sourceIdentifier,
       url: url,
       authors: authors,
       title: title,
@@ -88,10 +90,28 @@ async function clearSourceAndNewsAsync() {
 }
 exports.clearSourceAndNewsAsync = clearSourceAndNewsAsync;
 
+async function tryFindSourceAsync(id, url, name, identifier) {
+  let sourceDocument = await sourceModel
+    .findOne({
+      $or: [
+        { url: url },
+        { _id: id },
+        { name: name },
+        { identifier: identifier },
+      ],
+    })
+    .exec();
+  return sourceDocument;
+}
+exports.tryFindSourceAsync = tryFindSourceAsync;
+
 /*
   options: {
     query: ...,
     count: ...,
+    source: ...,
+    country: ...,
+    sourceUrl: ...,
     sorting: {
       sortBy: ...,
       sortOrder: ...
@@ -106,6 +126,8 @@ async function getNewsAsync(opts) {
   if (!opts) opts = {};
   let optsCpy = sanitationUtils.trimOffAnyOtherPropertiesFromObjectSync(opts, [
     "query",
+    "source",
+    "country",
     "count",
     "sorting",
     "timestamp",
@@ -127,6 +149,8 @@ async function getNewsAsync(opts) {
 
   let options = {
     query: null,
+    source: null,
+    country: null,
     count: 20,
     sorting: {
       sortBy: "createdAt",
@@ -138,6 +162,7 @@ async function getNewsAsync(opts) {
 
   let timeFilter = {},
     queryFilter = {},
+    miscFilter = {},
     sortFilter = {};
 
   if (options?.timestamp?.fromDate && options?.timestamp?.timeFilter) {
@@ -152,12 +177,13 @@ async function getNewsAsync(opts) {
     queryFilter = { $text: { $search: options.query } };
   }
 
+  if (options?.country) {
+    miscFilter.country = options.country;
+  }
+
   if (options?.sorting?.sortBy && options?.sorting?.sortOrder) {
     sortFilter[options.sorting.sortBy] = options.sorting.sortOrder;
   }
-
-  console.log(timeFilter);
-  console.log(sortFilter);
 
   let news = await newsModel
     .find({

@@ -6,6 +6,7 @@ const puppeteer = require("puppeteer");
 const sanitationUtils = require("./sanitationUtils");
 
 const newsUtils = require("./newsUtils");
+const dataUtils = require("./dataUtils");
 
 async function fetchNewsRawDataAsync(
   sourceDocument,
@@ -31,6 +32,7 @@ async function fetchNewsRawDataAsync(
           qry,
           evalFuncAsync,
           sourceDocument._id,
+          sourceDocument.identifier,
           sourceDocument.tags,
           sourceDocument.selectors,
           sourceDocument.fetchNames,
@@ -111,6 +113,7 @@ function fetchRawNewsSingleDataSync(rawNews, selector, fetchName, modifier) {
 async function processRawApiNewsDataAsync(
   rawNewsArray,
   sourceId,
+  sourceIdentifier,
   sourceTags,
   selectors,
   fetchNames,
@@ -120,6 +123,7 @@ async function processRawApiNewsDataAsync(
   for (let n of rawNewsArray) {
     let pNews = {
       source: sourceId,
+      sourceIdentifier: sourceIdentifier,
       tags: sourceTags,
     };
     let i = 0;
@@ -137,6 +141,7 @@ async function processRawApiNewsDataAsync(
     if (
       sanitationUtils.objectHasAllPropertiesSync(pNews, [
         "source",
+        "sourceIdentifier",
         "title",
         "description",
         "url",
@@ -157,6 +162,7 @@ async function processRawPageNewsDataAsync(
   rawNewsElementArrayDOM,
 
   sourceId,
+  sourceIdentifier,
   sourceTags,
 
   selectors,
@@ -167,6 +173,7 @@ async function processRawPageNewsDataAsync(
     rawNewsElementArrayDOM.map(async (n) => {
       let pNews = {
         source: sourceId,
+        sourceIdentifier: sourceIdentifier,
         tags: sourceTags,
         datas: [],
       };
@@ -252,6 +259,7 @@ async function processRawPageNewsDataAsync(
       if (
         await objectHasAllPropertiesAsync(pNews, [
           "source",
+          "sourceIdentifier",
           "title",
           "description",
           "url",
@@ -277,6 +285,7 @@ async function fetchApiNewsAsync(sourceDocument, method) {
         let news = await processRawApiNewsDataAsync(
           rawNews,
           sourceDocument._id,
+          sourceDocument.identifier,
           sourceDocument.tags,
           sourceDocument.selectors,
           sourceDocument.fetchNames,
@@ -287,6 +296,7 @@ async function fetchApiNewsAsync(sourceDocument, method) {
           news.map(async (n) =>
             newsUtils.tryRegisterNewsAsync(
               n.source,
+              n.sourceIdentifier,
               n.url,
               n.authors,
               n.title,
@@ -327,6 +337,7 @@ async function fetchPageNewsAsync(sourceDocument) {
     news.map(async (n) =>
       newsUtils.tryRegisterNewsAsync(
         n.source,
+        n.sourceIdentifier,
         n.url,
         n.authors,
         n.title,
@@ -361,3 +372,22 @@ async function fetchSourceNewsAsync(sourceId) {
   return data;
 }
 exports.fetchSourceNewsAsync = fetchSourceNewsAsync;
+
+async function fetchRecentNewsAsync() {
+  const init = require("./../initialization");
+  const bCfg = init.getConfig("backend");
+
+  let sources = await sourceModel
+    .find()
+    .limit(15)
+    .sort({ lastChecked: 1 })
+    .exec();
+
+  let i = 0;
+  for (let s of sources) {
+    if (i >= bCfg.sourceFetchBatchSize) break;
+    await dataUtils.fetchSourceNewsAsync(s._id);
+    ++i;
+  }
+}
+exports.fetchRecentNewsAsync = fetchRecentNewsAsync;
