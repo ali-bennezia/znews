@@ -13,15 +13,24 @@
         "json%title",
         "json%description",
         "json%url",
-        "json%urlToImage"
+        "json%urlToImage",
+        "json%publishedAt"
       ],
-      "fetchNames": ["authors", "title", "description", "url", "images"],
+      "fetchNames": [
+        "authors",
+        "title",
+        "description",
+        "url",
+        "images",
+        "reportedAt"
+      ],
       "modifiers": [
         "wrapInArray",
         "emptyIfNull",
         "emptyIfNull",
         "emptyIfNull",
-        "wrapInArray"
+        "wrapInArray",
+        "default"
       ]
     },
     {
@@ -37,14 +46,23 @@
         "dom-content%div.ui-story-headline > a",
         "none",
         "dom-attrib%div.ui-story-headline > a%href",
-        "dom-attrib%img.ui-story-image%src"
+        "dom-attrib%img.ui-story-image%src",
+        "dom-content%div.ui-story-meta > a.ui-label"
       ],
-      "fetchNames": ["authors", "title", "description", "url", "images"],
+      "fetchNames": [
+        "authors",
+        "title",
+        "description",
+        "url",
+        "images",
+        "tags"
+      ],
       "modifiers": [
         "none",
         "emptyIfNull",
         "emptyIfNull",
         "emptyIfNull",
+        "wrapInArray",
         "wrapInArray"
       ]
     }

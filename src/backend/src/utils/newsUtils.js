@@ -52,7 +52,8 @@ async function tryRegisterNewsAsync(
   title,
   description,
   imageExternalURLs,
-  tags
+  tags,
+  reportedAt
 ) {
   let n = await newsModel.find().or([{ title: title }, { url: url }]);
   if (n.length > 0) return n[0];
@@ -77,6 +78,7 @@ async function tryRegisterNewsAsync(
       description: description,
       images: imageNames,
       tags: tags,
+      reportedAt: reportedAt,
     })
     .catch((err) => {
       fileUtils.deleteImagesSync(imageNames);

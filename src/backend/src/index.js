@@ -7,6 +7,7 @@ const wsExpress = require("websocket-express");
 const initialization = require("./initialization.js");
 
 const dataUtils = require("./utils/dataUtils.js");
+const newsUtils = require("./utils/newsUtils.js");
 
 const app = express();
 const wsApp = new wsExpress.WebSocketExpress();
@@ -92,5 +93,7 @@ mongoose
 
 require("./jobs/scrapJob.js");
 require("./jobs/gcJob.js");
+
+//newsUtils.clearSourceAndNewsAsync();
 
 dataUtils.fetchRecentNewsAsync();

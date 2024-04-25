@@ -6,7 +6,7 @@ const puppeteer = require("puppeteer");
 const sanitationUtils = require("./sanitationUtils");
 
 const newsUtils = require("./newsUtils");
-const dataUtils = require("./dataUtils");
+const stringUtils = require("./stringUtils");
 
 async function fetchNewsRawDataAsync(
   sourceDocument,
@@ -193,15 +193,19 @@ async function processRawPageNewsDataAsync(
             for (let i = 0; i < jsonPathData.length; ++i) {
               result =
                 i == 0 ? rawNews[jsonPathData[i]] : result[jsonPathData[i]];
+              if (result == undefined) break;
             }
             break;
           case "dom-attrib":
-            result = rawNews
-              .querySelector(selectorData[1])
-              .getAttribute(selectorData[2]);
+            let elm = rawNews.querySelector(selectorData[1]);
+            result = elm ? elm.getAttribute(selectorData[2]) : undefined;
             break;
           case "dom-content":
-            result = rawNews.querySelector(selectorData[1]).textContent;
+            let elm2 = rawNews.querySelector(selectorData[1]);
+            result = elm2 ? elm2.textContent : undefined;
+            break;
+          case "default":
+            result = result;
             break;
           case "none":
             result = "";
@@ -340,7 +344,7 @@ async function fetchPageNewsAsync(sourceDocument) {
       newsUtils.tryRegisterNewsAsync(
         n.source,
         n.sourceIdentifier,
-        n.url,
+        stringUtils.joinURLsBySlash(sourceDocument.url, n.url),
         n.authors,
         n.title,
         n.description,
@@ -388,7 +392,7 @@ async function fetchRecentNewsAsync() {
   let i = 0;
   for (let s of sources) {
     if (i >= bCfg.sourceFetchBatchSize) break;
-    await dataUtils.fetchSourceNewsAsync(s._id);
+    await fetchSourceNewsAsync(s._id);
     ++i;
   }
 }

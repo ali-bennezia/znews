@@ -28,3 +28,28 @@ function getUrlSLD(url) {
     .split("/")[0];
 }
 exports.getUrlSLD = getUrlSLD;
+
+function trimLastSlashFromURL(url) {
+  if (url.endsWith("/")) {
+    let arr = url.split("");
+    arr.pop();
+    return arr.join("");
+  }
+  return url;
+}
+exports.trimLastSlashFromURL = trimLastSlashFromURL;
+
+function trimFirstSlashFromURL(url) {
+  if (url.startsWith("/")) {
+    let arr = url.split("");
+    arr.shift();
+    return arr.join("");
+  }
+  return url;
+}
+exports.trimFirstSlashFromURL = trimFirstSlashFromURL;
+
+function joinURLsBySlash(url1, url2) {
+  return [trimLastSlashFromURL(url1), trimFirstSlashFromURL(url2)].join("/");
+}
+exports.joinURLsBySlash = joinURLsBySlash;

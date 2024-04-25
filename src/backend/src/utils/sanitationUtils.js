@@ -64,6 +64,7 @@ async function formatNewsAsync(newsDocument) {
       : [],
     tags: newsDocument?.tags ? newsDocument.tags : [],
     createdAt: newsDocument.createdAt,
+    reportedAt: newsDocument.reportedAt,
   };
 }
 exports.formatNewsAsync = formatNewsAsync;

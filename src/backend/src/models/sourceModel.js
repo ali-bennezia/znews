@@ -33,11 +33,19 @@ const schema = new mongoose.Schema(
       {
         type: String,
         required: true,
-        enum: ["url", "authors", "title", "description", "images", "tags"],
+        enum: [
+          "url",
+          "authors",
+          "title",
+          "description",
+          "images",
+          "tags",
+          "reportedAt",
+        ],
       },
     ],
     modifiers: [
-      { type: String, required: true }, //["trimBegin", "trimEnd", "wrapInArray", "emptyIfNull"], example: trimBegin%Show HN: %wrapInArray
+      { type: String, required: true }, //["trimBegin", "trimEnd", "wrapInArray", "emptyIfNull", "default", "none", "none-array"], example: trimBegin%Show HN: %wrapInArray
     ],
   },
   { timestamps: true }

@@ -16,7 +16,9 @@
     >
       <div class="mb-8">
         <div class="text-gray-900 font-bold text-xl mb-2">
-          {{ news.title }}
+          <a [href]="news.url">
+            {{ news.title }}
+          </a>
         </div>
         <p class="text-gray-700 text-base" *ngIf="news.description != ''">
           {{ news.description }}
@@ -25,7 +27,11 @@
       <div class="flex items-center">
         <div class="text-sm">
           <p class="text-gray-900 leading-none">{{ news.authors }}</p>
-          <p class="text-gray-600">Fetched {{ news.createdAt | date }}</p>
+          <p class="text-gray-600">
+            <ng-container *ngIf="news.reportedAt"
+              >Reported {{ news.reportedAt | date }}, </ng-container
+            >Fetched {{ news.createdAt | date }}
+          </p>
           <ng-container *ngIf="news.source">
             <a [href]="news.source.url" class="text-gray-400">{{
               news.source.name

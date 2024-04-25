@@ -20,6 +20,7 @@ const schema = new mongoose.Schema(
     description: { type: String, required: false, unique: false },
     images: [{ type: String, required: false }],
     tags: [{ type: String, required: false }],
+    reportedAt: { type: Date, required: false },
   },
   { timestamps: true }
 );

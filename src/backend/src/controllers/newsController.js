@@ -10,7 +10,6 @@ exports.getNewsAPI = async (req, res) => {
     ws.on("message", async function (msg) {
       try {
         let msgObj = JSON.parse(String(msg));
-        console.log(msgObj);
         if (
           !sanitationUtils.objectHasAllPropertiesSync(msgObj, [
             "type",

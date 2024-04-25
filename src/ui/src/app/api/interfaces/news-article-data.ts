@@ -9,4 +9,5 @@ export interface NewsArticleData {
   images: string[];
   tags: string[];
   createdAt: Date;
+  reportedAt?: Date;
 }
