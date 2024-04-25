@@ -13,4 +13,6 @@ body,
   height: 100vh;
 
   position: absolute;
+
+  background-color: rgb(245, 245, 245);
 }
