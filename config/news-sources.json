@@ -30,7 +30,7 @@
         "emptyIfNull",
         "emptyIfNull",
         "wrapInArray",
-        "default"
+        "none"
       ]
     },
     {

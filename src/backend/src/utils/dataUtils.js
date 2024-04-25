@@ -57,15 +57,16 @@ function fetchRawNewsSingleDataSync(rawNews, selector, fetchName, modifier) {
       let jsonPathData = jsonPath.split(".");
       for (let i = 0; i < jsonPathData.length; ++i) {
         result = i == 0 ? rawNews[jsonPathData[i]] : result[jsonPathData[i]];
+        if (result == undefined) break;
       }
       break;
     case "dom-attrib":
-      result = rawNews
-        .querySelector(selectorData[1])
-        .getAttribute(selectorData[2]);
+      let elm = rawNews.querySelector(selectorData[1]);
+      result = elm ? elm.getAttribute(selectorData[2]) : undefined;
       break;
     case "dom-content":
-      result = rawNews.querySelector(selectorData[1]).textContent;
+      let elm2 = rawNews.querySelector(selectorData[1]);
+      result = elm2 ? elm2.textContent : undefined;
       break;
     case "none":
       result = "";
@@ -204,9 +205,6 @@ async function processRawPageNewsDataAsync(
             let elm2 = rawNews.querySelector(selectorData[1]);
             result = elm2 ? elm2.textContent : undefined;
             break;
-          case "default":
-            result = result;
-            break;
           case "none":
             result = "";
             break;
@@ -306,7 +304,8 @@ async function fetchApiNewsAsync(sourceDocument, method) {
               n.title,
               n.description,
               n.images,
-              n.tags
+              n.tags,
+              n.reportedAt
             )
           )
         );
@@ -349,7 +348,8 @@ async function fetchPageNewsAsync(sourceDocument) {
         n.title,
         n.description,
         n.images,
-        n.tags
+        n.tags,
+        n.reportedAt
       )
     )
   );

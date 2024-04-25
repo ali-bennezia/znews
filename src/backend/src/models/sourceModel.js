@@ -28,7 +28,7 @@ const schema = new mongoose.Schema(
     sourceType: { type: String, required: true }, // ['api%post', 'api%get', 'api%...', 'page']
     lastChecked: { type: Date, required: true },
     newsPointer: { type: String, required: true }, // json%data.articles, page%div.my-news
-    selectors: [{ type: String, required: true }], // json%properties.images, dom-attrib%a.div.test%myAttribute, dom-content%a.element.p
+    selectors: [{ type: String, required: true }], // json%properties.images, dom-attrib%a.div.test%myAttribute, dom-content%a.element.p, none, none-array
     fetchNames: [
       {
         type: String,
@@ -45,7 +45,7 @@ const schema = new mongoose.Schema(
       },
     ],
     modifiers: [
-      { type: String, required: true }, //["trimBegin", "trimEnd", "wrapInArray", "emptyIfNull", "default", "none", "none-array"], example: trimBegin%Show HN: %wrapInArray
+      { type: String, required: true }, //["trimBegin", "trimEnd", "wrapInArray", "emptyIfNull", "none"], example: trimBegin%Show HN: %wrapInArray
     ],
   },
   { timestamps: true }

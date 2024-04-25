@@ -11,9 +11,9 @@
 >
   <app-dropdown-button
     label="Sort By"
-    [choices]="['Date', 'Content', 'Source', 'Tags']"
-    [choiceValues]="['createdAt', 'content', 'source', 'tags']"
-    defaultChoice="Date"
+    [choices]="['Published Date', 'Fetched Date', 'Content', 'Source', 'Tags']"
+    [choiceValues]="['reportedAt', 'createdAt', 'content', 'source', 'tags']"
+    defaultChoice="Published Date"
     [appendChoice]="true"
   ></app-dropdown-button>
   <app-dropdown-button
