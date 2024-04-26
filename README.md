@@ -61,15 +61,26 @@ Any string within the `selectors` source property must follow either formats:
 
 Any string within the `fetchNames` source property must be of either values:
 
-| value       | description                          | optional? |
-| ----------- | ------------------------------------ | --------- |
-| url         | The news article URL.                | No        |
-| authors     | The news article's authors.          | No        |
-| title       | The news article's title.            | No        |
-| description | The news article's description.      | Yes       |
-| images      | The news article's images.           | Yes       |
-| tags        | The news article's tags.             | Yes       |
-| reportedAt  | The news article's publication date. | Yes       |
+| value       | description                          | optional? | type             |
+| ----------- | ------------------------------------ | --------- | ---------------- |
+| url         | The news article URL.                | No        | string           |
+| authors     | The news article's authors.          | No        | array of strings |
+| title       | The news article's title.            | No        | string           |
+| description | The news article's description.      | Yes       | string           |
+| images      | The news article's images.           | Yes       | array of strings |
+| tags        | The news article's tags.             | Yes       | array of strings |
+| reportedAt  | The news article's publication date. | Yes       | string           |
+
+The `modifiers` source property indicates how each news article's properties are altered after they've been fetched.
+They can have values following these formats:
+
+| format                                          | description                                                          |
+| ----------------------------------------------- | -------------------------------------------------------------------- |
+| trimBegin%(string to trim off at the beginning) | Removes a string if present at the beginning of the string property. |
+| trimEnd%(strimg to trim off at the end)         | Removes a string if present at the end of the string property.       |
+| wrapInArray                                     | Transforms the property into an array only containing it.            |
+| emptyIfNull                                     | Transforms the property into an empty string if equal to null.       |
+| none                                            | Doesn't affect the property.                                         |
 
 ### Sources with API parameters
 
