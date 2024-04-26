@@ -174,7 +174,40 @@ async function getNewsAsync(opts) {
     sortFilter = {};
 
   if (options.query) {
-    findFilter = { ...findFilter, $text: { $search: options.query } };
+    // Query tags
+    let queryData = options.query.split(" ");
+    if (queryData.find((el) => el.startsWith("%") && el.endsWith("%"))) {
+      let dataTags = queryData.filter(
+        (el) => el.startsWith("%") && el.endsWith("%")
+      );
+
+      for (let dataTag of dataTags) {
+        let clnTag = dataTag.replaceAll("%", "");
+        let clnTagData = clnTag.split(":");
+        if (
+          [
+            "reportedAt",
+            "createdAt",
+            "content",
+            "sourceIdentifier",
+            "tags",
+          ].includes(clnTagData[0])
+        ) {
+          console.log(
+            "includes '" + clnTagData[0] + " for data '" + clnTagData[1] + "'"
+          );
+          findFilter[clnTagData[0]] = clnTagData[1];
+          options.query = options.query.replaceAll(dataTag, "");
+          if (options.query == "") {
+            options.query = undefined;
+          }
+        }
+      }
+    }
+    if (options.query) {
+      // Query
+      findFilter = { ...findFilter, $text: { $search: options.query } };
+    }
   }
 
   if (options.source || options.sourceUrl) {
@@ -210,6 +243,7 @@ async function getNewsAsync(opts) {
     .skip(cnt * options.page)
     .limit(cnt)
     .exec();*/
+  console.log(findFilter);
 
   let news2 = await newsModel.paginate(
     { ...findFilter },
