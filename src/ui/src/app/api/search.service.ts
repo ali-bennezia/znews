@@ -32,7 +32,6 @@ export class SearchService {
   onConnected(socket: WebSocket) {}
 
   onMessageReceived(socket: WebSocket, msg: MessageData) {
-    console.log(msg);
     this.news = msg.content as NewsArticleData[];
   }
 }

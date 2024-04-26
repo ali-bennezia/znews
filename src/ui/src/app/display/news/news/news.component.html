@@ -13,6 +13,13 @@
     ></div>
     <div
       class="border-r border-b border-l border-gray-400 lg:border-l-0 lg:border-t lg:border-gray-400 bg-white rounded-b lg:rounded-b-none lg:rounded-r p-4 flex flex-col justify-between leading-normal lg:w-[400px] xl:w-[600px] 2xl:w-[800px]"
+      [ngClass]="{
+        'lg:border-l-0': !news.images || news.images.length == 0 ? false : true,
+        'lg:rounded-b-none':
+          !news.images || news.images.length == 0 ? false : true,
+        border: !news.images || news.images.length == 0 ? true : true,
+        rounded: !news.images || news.images.length == 0 ? true : true
+      }"
     >
       <div class="mb-8">
         <div class="text-gray-900 font-bold text-xl mb-2">
