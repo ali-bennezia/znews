@@ -46,6 +46,18 @@ The `newsPointer` source property follows either formats:
 | json%(property path)     | Indicates the array property containing the news articles relative to the object returned by the source API. |
 | page%(property selector) | Indicates the CSS selector pointing to a news article.                                                       |
 
+The `selectors`, `fetchNames` and `modifiers` properties must be string arrays and describe how and where a specific property tied to a news article is to be found.
+
+Any string within the `selectors` property must follow either formats:
+
+| format                                                   | description                                                                                                             |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| json%(property path relative to the news article object) | Indicates an objet property's path as obtained through an API.                                                          |
+| dom-attrib%(CSS selector)%(HTML attribute)               | Indicates a property taken from a DOM element specified by a CSS selector and an HTML attribute, through a Web scraper. |
+| dom-content%(CSS selector)                               | Indicates a property taken from a DOM element, through its text content.                                                |
+| none                                                     | Indicates an empty string.                                                                                              |
+| none-array                                               | Indicates an empty array.                                                                                               |
+
 ### Sources with API parameters
 
 Inside of the config file, create a backend-.env file. If you use any APIs which requires a key to access, this is a necessary step. The default News API source does. If you whish to use it, go to https://newsapi.org/, get an API key. Inside of the backend-.env file, add a line following this format:
