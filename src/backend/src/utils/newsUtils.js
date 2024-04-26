@@ -110,30 +110,27 @@ exports.tryFindSourceAsync = tryFindSourceAsync;
 /*
   options: {
     query: ...,
+    page: ...,
     count: ...,
     source: ...,
     country: ...,
     sourceUrl: ...,
     sorting: {
-      sortBy: ...,
-      sortOrder: ...
+      sortBy: ..., ['reportedAt', 'createdAt', 'content', 'source' 'tags']
+      sortOrder: ...,
     },
-    timestamp: {
-      fromDate: ...,
-      timeFilter: ...
-    }
   }
 */
 async function getNewsAsync(opts) {
   if (!opts) opts = {};
   let optsCpy = sanitationUtils.trimOffAnyOtherPropertiesFromObjectSync(opts, [
     "query",
-    "source",
-    "sourceUrl",
-    "country",
+    "page",
     "count",
+    "source",
+    "country",
+    "sourceUrl",
     "sorting",
-    "timestamp",
   ]);
 
   optsCpy.sorting = optsCpy?.sorting
@@ -143,12 +140,16 @@ async function getNewsAsync(opts) {
       ])
     : undefined;
 
-  optsCpy.timestamp = optsCpy?.timestamp
-    ? sanitationUtils.trimOffAnyOtherPropertiesFromObjectSync(
-        optsCpy.timestamp,
-        ["fromDate", "timeFilter"]
-      )
-    : undefined;
+  if (
+    !["reportedAt", "createdAt", "content", "source", "tags"].includes(
+      optsCpy?.sorting?.sortBy
+    ) ||
+    ![-1, 1].includes(optsCpy?.sorting?.sortOrder)
+  ) {
+    optsCpy.sorting = undefined;
+  }
+
+  optsCpy.query = optsCpy.query && optsCpy.query == "" ? null : optsCpy.query;
 
   let options = {
     query: null,
@@ -156,63 +157,54 @@ async function getNewsAsync(opts) {
     sourceUrl: null,
     country: null,
     count: 20,
+    page: 0,
+    ...optsCpy,
     sorting: {
       sortBy: "createdAt",
       sortOrder: 1,
+      ...optsCpy.sorting,
     },
-    timestamp: null,
-    ...optsCpy,
   };
 
-  let timeFilter = {},
-    queryFilter = {},
-    miscFilter = {},
+  let findFilter = {},
     sortFilter = {};
 
-  if (options?.timestamp?.fromDate && options?.timestamp?.timeFilter) {
-    let ts = options.timestamp.fromDate;
-    timeFilter =
-      options.timestamp.timeFilter == 1
-        ? { createdAt: { $gt: ts } }
-        : { createdAt: { $lt: ts } };
+  if (options.query) {
+    findFilter = { ...findFilter, $text: { $search: options.query } };
   }
 
-  if (options?.query) {
-    queryFilter = { $text: { $search: options.query } };
-    let findSrcs = [];
-    if (options?.source) {
-      findSrcs.push(options.source);
-    }
-    if (options?.sourceUrl) {
-      let foundSrc = await sourceModel.findOne({ url: options?.sourceUrl });
-      if (foundSrc) findSrcs.push(foundSrc._id);
-    }
-    if (findSrcs.length == 1) {
-      queryFilter[source] = findSrcs[0];
-    } else if (findSrcs.length > 1) {
-      let multSourcesFilter = { $or: [] };
-      for (let iSrc of findSrcs) {
-        multSourcesFilter["$or"].push({ _id: iSrc });
-      }
-      queryFilter = { ...queryFilter, ...multSourcesFilter };
+  if (options.source || options.sourceUrl) {
+    let sourceFromUrl = await sourceModel.findOne({ url: options.sourceUrl });
+    let findSources = [options.source];
+    if (sourceFromUrl) findSources.push(sourceFromUrl._id);
+    findFilter = { ...findFilter, source: findSources };
+  }
+
+  if (options.country) {
+    findFilter = { ...findFilter, country: options.country };
+  }
+
+  if (options.sorting) {
+    if (options.sorting.sortBy == "content") {
+      sortFilter = {
+        ...sortFilter,
+        title: options.sorting.sortOrder,
+        description: options.sorting.sortOrder,
+      };
+    } else {
+      sortFilter[options.sorting.sortBy] = options.sorting.sortOrder;
     }
   }
 
-  if (options?.country) {
-    miscFilter.country = options.country;
-  }
-
-  if (options?.sorting?.sortBy && options?.sorting?.sortOrder) {
-    sortFilter[options.sorting.sortBy] = options.sorting.sortOrder;
-  }
+  let cnt = options.count ? options.count : 20;
 
   let news = await newsModel
     .find({
-      ...timeFilter,
-      ...queryFilter,
+      ...findFilter,
     })
     .sort(sortFilter)
-    .limit(options.count ? options.count : 20)
+    .skip(options.page * cnt)
+    .limit(cnt)
     .exec();
 
   return news;

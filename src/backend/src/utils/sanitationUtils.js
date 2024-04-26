@@ -52,6 +52,7 @@ async function formatNewsAsync(newsDocument) {
   );
 
   return {
+    id: newsDocument._id.toString(),
     source: sourceDocument ? formatSourceSync(sourceDocument) : null,
     url: newsDocument.url,
     authors: newsDocument?.authors ? newsDocument.authors : [],

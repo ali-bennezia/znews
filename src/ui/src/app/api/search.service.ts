@@ -17,10 +17,22 @@ import { QueryOptionsData } from "./interfaces/query-options-data";
 export class SearchService {
   news: NewsArticleData[] = [];
 
-  queryOptions: QueryOptionsData = {};
+  queryOptions: QueryOptionsData = {
+    query: "",
+  };
 
   emitSearchQuery(qry: string) {
+    this.queryOptions.query = qry;
     this.onQuerySource.next(qry);
+  }
+
+  onSearchQuery(qry: string) {
+    this.sendQuery(this.queryOptions);
+  }
+
+  setPage(page: number) {
+    this.queryOptions.page = page;
+    this.sendQuery(this.queryOptions);
   }
 
   onQuerySource: Subject<string> = new Subject<string>();
@@ -29,6 +41,7 @@ export class SearchService {
     .pipe(distinctUntilChanged(), debounceTime(300));
 
   constructor(private wsService: WebSocketService) {
+    this.onQuery$.subscribe((qry) => this.onSearchQuery(qry));
     this.wsService.onMessageReceived$.subscribe((dat: NetworkData) => {
       this.onMessageReceived(dat.socket, dat.message);
     });

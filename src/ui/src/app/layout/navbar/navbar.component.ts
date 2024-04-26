@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { SearchService } from "src/app/api/search.service";
 
 @Component({
   selector: "app-navbar",
@@ -7,4 +8,10 @@ import { Component } from "@angular/core";
 })
 export class NavbarComponent {
   showMobileMenu: boolean = false;
+
+  constructor(public searchService: SearchService) {}
+
+  onInput(inp: string) {
+    this.searchService.emitSearchQuery(inp);
+  }
 }

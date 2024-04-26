@@ -92,6 +92,8 @@
             name="search"
             placeholder="Search News"
             style="width: 400px"
+            (input)="onInput($any($event.target).value)"
+            [value]="searchService.queryOptions.query"
           />
           <button type="submit" class="absolute right-0 top-0 mt-3 mr-2">
             <svg
@@ -123,6 +125,8 @@
             name="search"
             placeholder="Search News"
             style="width: 200px"
+            (input)="onInput($any($event.target).value)"
+            [value]="searchService.queryOptions.query"
           />
           <button type="submit" class="absolute right-0 top-0 mt-3 mr-2">
             <svg
@@ -190,6 +194,8 @@
         name="search"
         placeholder="Search News"
         style="width: 100%"
+        (input)="onInput($any($event.target).value)"
+        [value]="searchService.queryOptions.query"
       />
       <button type="submit" class="absolute right-0 top-0 mt-3 mr-2">
         <svg
