@@ -77,7 +77,7 @@ They can have values following these formats:
 | format                                          | description                                                          |
 | ----------------------------------------------- | -------------------------------------------------------------------- |
 | trimBegin%(string to trim off at the beginning) | Removes a string if present at the beginning of the string property. |
-| trimEnd%(strimg to trim off at the end)         | Removes a string if present at the end of the string property.       |
+| trimEnd%(string to trim off at the end)         | Removes a string if present at the end of the string property.       |
 | wrapInArray                                     | Transforms the property into an array only containing it.            |
 | emptyIfNull                                     | Transforms the property into an empty string if equal to null.       |
 | none                                            | Doesn't affect the property.                                         |
