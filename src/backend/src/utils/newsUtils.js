@@ -198,7 +198,7 @@ async function getNewsAsync(opts) {
           );
           findFilter[clnTagData[0]] = clnTagData[1];
           options.query = options.query.replaceAll(dataTag, "");
-          if (options.query == "") {
+          if (options.query.trim() == "") {
             options.query = undefined;
           }
         }
