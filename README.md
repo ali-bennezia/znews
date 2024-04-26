@@ -2,6 +2,10 @@
 
 This is an automated news aggregator, based upon the Express.js/Angular tech stack. Under the hood, it uses either Puppeteer to access Web pages from which to scrap news, or it directly contacts APIs to do so.
 
+## Gallery
+
+![Znews screenshot 1](docs/Znews1.png)
+
 ## Architecture
 
 It's mainly composed of a back-end server, running on Express.js, and an Angular front-end UI.
