@@ -47,16 +47,29 @@ The `newsPointer` source property follows either formats:
 | page%(property selector) | Indicates the CSS selector pointing to a news article.                                                       |
 
 The `selectors`, `fetchNames` and `modifiers` properties must be string arrays and describe how and where a specific property tied to a news article is to be found.
+All elements of these three arrays are respectively tied through their array index such that any triplet describes a news article property.
 
-Any string within the `selectors` property must follow either formats:
+Any string within the `selectors` source property must follow either formats:
 
 | format                                                   | description                                                                                                             |
 | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| json%(property path relative to the news article object) | Indicates an objet property's path as obtained through an API.                                                          |
+| json%(property path relative to the news article object) | Indicates an object property's path as obtained through an API.                                                         |
 | dom-attrib%(CSS selector)%(HTML attribute)               | Indicates a property taken from a DOM element specified by a CSS selector and an HTML attribute, through a Web scraper. |
 | dom-content%(CSS selector)                               | Indicates a property taken from a DOM element, through its text content.                                                |
 | none                                                     | Indicates an empty string.                                                                                              |
 | none-array                                               | Indicates an empty array.                                                                                               |
+
+Any string within the `fetchNames` source property must be of either values:
+
+| value       | description                          | optional? |
+| ----------- | ------------------------------------ | --------- |
+| url         | The news article URL.                | No        |
+| authors     | The news article's authors.          | No        |
+| title       | The news article's title.            | No        |
+| description | The news article's description.      | Yes       |
+| images      | The news article's images.           | Yes       |
+| tags        | The news article's tags.             | Yes       |
+| reportedAt  | The news article's publication date. | Yes       |
 
 ### Sources with API parameters
 
