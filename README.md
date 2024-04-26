@@ -15,9 +15,23 @@ The communication line based on HTTP is used to fetch static assets such as the 
 Inside of the config file, add any source you'd like in the news-source.json configuration file, in its `sources` array.
 Any source must have these properties:
 
-| name                                                 | identifier                        | url               | country               | tags                                           | sourceType         | newsPointer                                                                  | selectors                                                                                   | fetchNames                                                                                                               | modifiers                                                                                          |
-| ---------------------------------------------------- | --------------------------------- | ----------------- | --------------------- | ---------------------------------------------- | ------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
-| The name of the source. Will be displayed on the UI. | The source's internal identifier. | The source's url. | The source's country. | Tags associated to the source, a string array. | The source's type. | A pointer describing where the source's news are, and how they are accessed. | An array of strings containing data indicating how each element of a news article is found. | An array of strings indicating how the associated element, in the same index in the selectors array is named internally. | An array of string indicating how each of a news article's elements is to be altered when fetched. |
+| name                                                 | identifier                        | url               | country               | tags                                           | sourceType         | newsPointer                                                                  | selectors                                                                                   | fetchNames                                                                                                               | modifiers                                                                                                                                                                  |
+| ---------------------------------------------------- | --------------------------------- | ----------------- | --------------------- | ---------------------------------------------- | ------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The name of the source. Will be displayed on the UI. | The source's internal identifier. | The source's url. | The source's country. | Tags associated to the source, a string array. | The source's type. | A pointer describing where the source's news are, and how they are accessed. | An array of strings containing data indicating how each element of a news article is found. | An array of strings indicating how the associated element, in the same index in the selectors array is named internally. | An array of string indicating how each of a news article's elements is to be altered when fetched. Also associated to a corresponding selectors element through its index. |
+
+The `sourceType` source property follows either formats:
+
+| format       | description                                                                     |
+| ------------ | ------------------------------------------------------------------------------- |
+| api%<method> | Describes a source pointing to an API, and the HTTP method to use to access it. |
+| page         | Describes a source pointing to a Web page, accessed through a scraper.          |
+
+The `newsPointer` source property follows either formats:
+
+| format                   | description                                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| json%<property path>     | Indicates the array property containing the news articles relative to the object returned by the source API. |
+| page%<property selector> | Indicates the CSS selector pointing to a news article.                                                       |
 
 ### Sources with API parameters
 
