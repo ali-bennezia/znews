@@ -193,9 +193,6 @@ async function getNewsAsync(opts) {
             "tags",
           ].includes(clnTagData[0])
         ) {
-          console.log(
-            "includes '" + clnTagData[0] + " for data '" + clnTagData[1] + "'"
-          );
           findFilter[clnTagData[0]] = clnTagData[1];
           options.query = options.query.replaceAll(dataTag, "");
           if (options.query.trim() == "") {
