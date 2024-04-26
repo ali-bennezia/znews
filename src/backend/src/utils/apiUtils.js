@@ -8,8 +8,16 @@ exports.makeAPIMessageSync = makeAPIMessageSync;
 
 async function handleQueryRequestAsync(ws, msg) {
   let opts = msg.content;
-  const news = await newsUtils.getNewsAsync(opts);
 
+  let cl = getClientSync(ws);
+  cl.lastQuery = opts;
+
+  await sendWebSocketNewsAsync(ws, opts);
+}
+exports.handleQueryRequestAsync = handleQueryRequestAsync;
+
+async function sendWebSocketNewsAsync(ws, qry) {
+  const news = await newsUtils.getNewsAsync(qry);
   ws.send(
     makeAPIMessageSync(
       "newsPayload",
@@ -17,4 +25,32 @@ async function handleQueryRequestAsync(ws, msg) {
     )
   );
 }
-exports.handleQueryRequestAsync = handleQueryRequestAsync;
+
+/*
+  client: {
+    socket: ...,
+    lastQuery: ...
+  }
+*/
+var clients = [];
+function registerClientSync(webSocket) {
+  clients.push({ socket: webSocket, lastQuery: {} });
+}
+exports.registerClientSync = registerClientSync;
+
+function unregisterClientSync(webSocket) {
+  clients = clients.filter((el) => el.socket != webSocket);
+}
+exports.unregisterClientSync = unregisterClientSync;
+
+function getClientSync(webSocket) {
+  return clients.find((el) => el.socket == webSocket) ?? null;
+}
+exports.getClientSync = getClientSync;
+
+function sendClientsLastNews() {
+  for (let c of clients) {
+    sendWebSocketNewsAsync(c.socket, c.lastQuery);
+  }
+}
+exports.sendClientsLastNews = sendClientsLastNews;

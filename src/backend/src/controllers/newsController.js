@@ -7,6 +7,7 @@ const apiUtils = require("./../utils/apiUtils");
 exports.getNewsAPI = async (req, res) => {
   try {
     const ws = await res.accept();
+    apiUtils.registerClientSync(ws);
     ws.on("message", async function (msg) {
       try {
         let msgObj = JSON.parse(String(msg));
@@ -51,8 +52,12 @@ exports.getNewsAPI = async (req, res) => {
       //ws.close();
     });
 
-    ws.on("close", function (msg) {});
-    ws.on("error", function (msg) {});
+    ws.on("close", function (msg) {
+      apiUtils.unregisterClientSync(ws);
+    });
+    ws.on("error", function (msg) {
+      apiUtils.unregisterClientSync(ws);
+    });
   } catch (apiErr) {
     console.error(apiErr);
   }

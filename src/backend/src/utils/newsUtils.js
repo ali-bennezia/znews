@@ -243,7 +243,6 @@ async function getNewsAsync(opts) {
     .skip(cnt * options.page)
     .limit(cnt)
     .exec();*/
-  console.log(findFilter);
 
   let news2 = await newsModel.paginate(
     { ...findFilter },
