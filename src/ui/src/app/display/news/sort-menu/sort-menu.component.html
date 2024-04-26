@@ -12,7 +12,13 @@
   <app-dropdown-button
     label="Sort By"
     [choices]="['Published Date', 'Fetched Date', 'Content', 'Source', 'Tags']"
-    [choiceValues]="['reportedAt', 'createdAt', 'content', 'source', 'tags']"
+    [choiceValues]="[
+      'reportedAt',
+      'createdAt',
+      'content',
+      'sourceIdentifier',
+      'tags'
+    ]"
     defaultChoice="Published Date"
     [appendChoice]="true"
     (choiceValueChanged)="onSortByChanged($event)"

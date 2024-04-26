@@ -19,6 +19,7 @@ export class SearchService {
 
   queryOptions: QueryOptionsData = {
     query: "",
+    page: 0,
   };
 
   emitSearchQuery(qry: string) {
@@ -27,12 +28,12 @@ export class SearchService {
   }
 
   onSearchQuery(qry: string) {
-    this.sendQuery(this.queryOptions);
+    this.sendCurrentQuery();
   }
 
-  setPage(page: number) {
-    this.queryOptions.page = page;
-    this.sendQuery(this.queryOptions);
+  setPage(val: number) {
+    this.queryOptions.page = val;
+    this.sendCurrentQuery();
   }
 
   onQuerySource: Subject<string> = new Subject<string>();
@@ -53,15 +54,27 @@ export class SearchService {
   onConnected(socket: WebSocket) {}
 
   onMessageReceived(socket: WebSocket, msg: MessageData) {
-    this.news = msg.content as NewsArticleData[];
+    let presentIds = this.news.map((n) => n.id);
+    switch (msg.type) {
+      case "newsPayload":
+        this.news = (msg.content as NewsArticleData[]).filter(
+          (n) => !presentIds.includes(n.id)
+        );
+        break;
+      default:
+        break;
+    }
   }
 
   sendQuery(qry: QueryOptionsData) {
     this.wsService.sendMessage("query", qry);
   }
+  sendCurrentQuery() {
+    this.sendQuery(this.queryOptions);
+  }
 
   pushSortingOptions(opts: QuerySortingOptionsData) {
     this.queryOptions.sorting = opts;
-    this.sendQuery(this.queryOptions);
+    this.sendCurrentQuery();
   }
 }

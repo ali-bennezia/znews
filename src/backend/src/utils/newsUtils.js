@@ -110,11 +110,11 @@ exports.tryFindSourceAsync = tryFindSourceAsync;
 /*
   options: {
     query: ...,
-    page: ...,
     count: ...,
     source: ...,
     country: ...,
     sourceUrl: ...,
+    page: ....,
     sorting: {
       sortBy: ..., ['reportedAt', 'createdAt', 'content', 'source' 'tags']
       sortOrder: ...,
@@ -125,11 +125,11 @@ async function getNewsAsync(opts) {
   if (!opts) opts = {};
   let optsCpy = sanitationUtils.trimOffAnyOtherPropertiesFromObjectSync(opts, [
     "query",
-    "page",
     "count",
     "source",
     "country",
     "sourceUrl",
+    "page",
     "sorting",
   ]);
 
@@ -141,9 +141,13 @@ async function getNewsAsync(opts) {
     : undefined;
 
   if (
-    !["reportedAt", "createdAt", "content", "source", "tags"].includes(
-      optsCpy?.sorting?.sortBy
-    ) ||
+    ![
+      "reportedAt",
+      "createdAt",
+      "content",
+      "sourceIdentifier",
+      "tags",
+    ].includes(optsCpy?.sorting?.sortBy) ||
     ![-1, 1].includes(optsCpy?.sorting?.sortOrder)
   ) {
     optsCpy.sorting = undefined;
@@ -197,16 +201,20 @@ async function getNewsAsync(opts) {
   }
 
   let cnt = options.count ? options.count : 20;
-
+  /*
   let news = await newsModel
     .find({
       ...findFilter,
     })
     .sort(sortFilter)
-    .skip(options.page * cnt)
+    .skip(cnt * options.page)
     .limit(cnt)
-    .exec();
+    .exec();*/
 
-  return news;
+  let news2 = await newsModel.paginate(
+    { ...findFilter },
+    { page: options.page + 1, limit: cnt, sort: sortFilter }
+  );
+  return news2.docs;
 }
 exports.getNewsAsync = getNewsAsync;

@@ -1,5 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, HostListener } from "@angular/core";
 import { SelectionService } from "./interaction/selection.service";
+import { SearchService } from "./api/search.service";
 
 @Component({
   selector: "app-root",
@@ -9,7 +10,10 @@ import { SelectionService } from "./interaction/selection.service";
 export class AppComponent {
   title = "Znews";
 
-  constructor(private selService: SelectionService) {}
+  constructor(
+    private selService: SelectionService,
+    private serService: SearchService
+  ) {}
 
   onPageClick(e: Event) {
     if (e instanceof PointerEvent)

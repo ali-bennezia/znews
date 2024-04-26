@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 const fileUtils = require("./../utils/fileUtils");
 
 const schema = new mongoose.Schema(
@@ -26,6 +27,7 @@ const schema = new mongoose.Schema(
 );
 
 schema.index({ title: "text", description: "text" });
+schema.plugin(mongoosePaginate);
 
 schema.pre(
   ["deleteOne", "deleteMany"],

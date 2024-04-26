@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, HostListener } from "@angular/core";
 import { SearchService } from "src/app/api/search.service";
 
 @Component({

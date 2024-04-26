@@ -2,7 +2,7 @@ const newsUtils = require("./../utils/newsUtils");
 const sanitationUtils = require("./../utils/sanitationUtils");
 const apiUtils = require("./../utils/apiUtils");
 
-// To-client types: newsPayload, freshNewsCount
+// To-client types: putNewsPayload, patchNewsPayload
 // To-server types: query
 exports.getNewsAPI = async (req, res) => {
   try {
@@ -48,11 +48,11 @@ exports.getNewsAPI = async (req, res) => {
         );
       }
 
-      ws.on("close", function (msg) {});
-      ws.on("error", function (msg) {});
-
       //ws.close();
     });
+
+    ws.on("close", function (msg) {});
+    ws.on("error", function (msg) {});
   } catch (apiErr) {
     console.error(apiErr);
   }
