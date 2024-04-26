@@ -8,24 +8,32 @@ import { NewsArticleData } from "./interfaces/news-article-data";
 import { MessageData } from "./interfaces/message-data";
 import { NetworkData } from "./interfaces/network-data";
 
+import { QuerySortingOptionsData } from "./interfaces/query-sorting-options-data";
+import { QueryOptionsData } from "./interfaces/query-options-data";
+
 @Injectable({
   providedIn: "root",
 })
 export class SearchService {
   news: NewsArticleData[] = [];
 
+  queryOptions: QueryOptionsData = {};
+
+  emitSearchQuery(qry: string) {
+    this.onQuerySource.next(qry);
+  }
+
   onQuerySource: Subject<string> = new Subject<string>();
   onQuery$: Observable<string> = this.onQuerySource
     .asObservable()
     .pipe(distinctUntilChanged(), debounceTime(300));
-  //fetchNews$: Observable
 
   constructor(private wsService: WebSocketService) {
     this.wsService.onMessageReceived$.subscribe((dat: NetworkData) => {
       this.onMessageReceived(dat.socket, dat.message);
     });
     this.wsService.onConnected$.subscribe((sck) => {
-      this.wsService.sendMessage("query", {});
+      this.sendQuery(this.queryOptions);
     });
   }
 
@@ -33,5 +41,14 @@ export class SearchService {
 
   onMessageReceived(socket: WebSocket, msg: MessageData) {
     this.news = msg.content as NewsArticleData[];
+  }
+
+  sendQuery(qry: QueryOptionsData) {
+    this.wsService.sendMessage("query", qry);
+  }
+
+  pushSortingOptions(opts: QuerySortingOptionsData) {
+    this.queryOptions.sorting = opts;
+    this.sendQuery(this.queryOptions);
   }
 }

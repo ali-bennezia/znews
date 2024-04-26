@@ -15,6 +15,7 @@
     [choiceValues]="['reportedAt', 'createdAt', 'content', 'source', 'tags']"
     defaultChoice="Published Date"
     [appendChoice]="true"
+    (choiceValueChanged)="onSortByChanged($event)"
   ></app-dropdown-button>
   <app-dropdown-button
     label="Order By"
@@ -22,5 +23,6 @@
     [choiceValues]="['1', '-1']"
     defaultChoice="Ascending"
     [appendChoice]="true"
+    (choiceValueChanged)="onOrderByChanged($event)"
   ></app-dropdown-button>
 </div>

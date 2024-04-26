@@ -1,4 +1,11 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  Output,
+  OnDestroy,
+  OnInit,
+  EventEmitter,
+} from "@angular/core";
 import { Subscription } from "rxjs";
 import { SelectionService } from "src/app/interaction/selection.service";
 
@@ -25,11 +32,15 @@ export class DropdownButtonComponent implements OnInit, OnDestroy {
   currentChoiceLabel: string = "";
   currentChoiceValue: string = "";
 
+  @Output()
+  choiceValueChanged: EventEmitter<string> = new EventEmitter<string>();
+
   private currentChoice_: number = 0;
   set currentChoice(c: number) {
     this.currentChoice_ = c;
     this.currentChoiceLabel = this.choices[this.currentChoice];
     this.currentChoiceValue = this.choiceValues[this.currentChoice];
+    this.choiceValueChanged.emit(this.currentChoiceValue);
   }
   get currentChoice() {
     return this.currentChoice_;
