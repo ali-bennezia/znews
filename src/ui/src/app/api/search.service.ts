@@ -10,6 +10,7 @@ import { NetworkData } from "./interfaces/network-data";
 
 import { QuerySortingOptionsData } from "./interfaces/query-sorting-options-data";
 import { QueryOptionsData } from "./interfaces/query-options-data";
+import { query } from "@angular/animations";
 
 @Injectable({
   providedIn: "root",
@@ -19,7 +20,7 @@ export class SearchService {
 
   queryOptions: QueryOptionsData = {
     query: "",
-    page: 0,
+    page: 1,
   };
 
   emitSearchQuery(qry: string) {
@@ -33,6 +34,8 @@ export class SearchService {
 
   setPage(val: number) {
     this.queryOptions.page = val;
+    console.log(this.queryOptions);
+
     this.sendCurrentQuery();
   }
 
@@ -54,12 +57,12 @@ export class SearchService {
   onConnected(socket: WebSocket) {}
 
   onMessageReceived(socket: WebSocket, msg: MessageData) {
-    let presentIds = this.news.map((n) => n.id);
+    //let presentIds = this.news.map((n) => n.id);
     switch (msg.type) {
       case "newsPayload":
-        this.news = (msg.content as NewsArticleData[]).filter(
+        this.news = msg.content as NewsArticleData[]; /*.filter(
           (n) => !presentIds.includes(n.id)
-        );
+        );*/
         break;
       default:
         break;
@@ -75,6 +78,7 @@ export class SearchService {
 
   pushSortingOptions(opts: QuerySortingOptionsData) {
     this.queryOptions.sorting = opts;
+    console.log(this.queryOptions);
     this.sendCurrentQuery();
   }
 }

@@ -201,7 +201,7 @@ async function getNewsAsync(opts) {
         }
       }
     }
-    if (options.query) {
+    if (options.query && options.query.trim() != "") {
       // Query
       findFilter = { ...findFilter, $text: { $search: options.query } };
     }
@@ -241,9 +241,12 @@ async function getNewsAsync(opts) {
     .limit(cnt)
     .exec();*/
 
+  console.log(findFilter);
+  console.log(sortFilter);
+
   let news2 = await newsModel.paginate(
     { ...findFilter },
-    { page: options.page + 1, limit: cnt, sort: sortFilter }
+    { page: options.page, limit: cnt, sort: sortFilter }
   );
   return news2.docs;
 }

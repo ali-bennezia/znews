@@ -53,7 +53,7 @@ export class DropdownButtonComponent implements OnInit, OnDestroy {
       if (
         !(
           e.target &&
-          (e.target as any).className.includes("dropdownInteraction")
+          (e.target as any)?.className?.includes("dropdownInteraction")
         )
       ) {
         this.showDropdown = false;

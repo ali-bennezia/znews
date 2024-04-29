@@ -295,18 +295,19 @@ async function fetchApiNewsAsync(sourceDocument, method) {
         );
 
         let results = await Promise.all(
-          news.map(async (n) =>
-            newsUtils.tryRegisterNewsAsync(
-              n.source,
-              n.sourceIdentifier,
-              n.url,
-              n.authors,
-              n.title,
-              n.description,
-              n.images,
-              n.tags,
-              n.reportedAt
-            )
+          news.map(
+            async (n) =>
+              await newsUtils.tryRegisterNewsAsync(
+                n.source,
+                n.sourceIdentifier,
+                n.url,
+                n.authors,
+                n.title,
+                n.description,
+                n.images,
+                n.tags,
+                n.reportedAt
+              )
           )
         );
         resolve(results);
@@ -339,18 +340,19 @@ async function fetchPageNewsAsync(sourceDocument) {
   await page.close();
   await browser.close();
   let results = await Promise.all(
-    news.map(async (n) =>
-      newsUtils.tryRegisterNewsAsync(
-        n.source,
-        n.sourceIdentifier,
-        stringUtils.joinURLsBySlash(sourceDocument.url, n.url),
-        n.authors,
-        n.title,
-        n.description,
-        n.images,
-        n.tags,
-        n.reportedAt
-      )
+    news.map(
+      async (n) =>
+        await newsUtils.tryRegisterNewsAsync(
+          n.source,
+          n.sourceIdentifier,
+          stringUtils.joinURLsBySlash(sourceDocument.url, n.url),
+          n.authors,
+          n.title,
+          n.description,
+          n.images,
+          n.tags,
+          n.reportedAt
+        )
     )
   );
   return results;
