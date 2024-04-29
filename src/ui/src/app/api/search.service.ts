@@ -66,12 +66,9 @@ export class SearchService {
   onConnected(socket: WebSocket) {}
 
   onMessageReceived(socket: WebSocket, msg: MessageData) {
-    //let presentIds = this.news.map((n) => n.id);
     switch (msg.type) {
       case "newsPayload":
-        this.news = msg.content as NewsArticleData[]; /*.filter(
-          (n) => !presentIds.includes(n.id)
-        );*/
+        this.news = msg.content as NewsArticleData[];
         break;
       default:
         break;
@@ -80,7 +77,6 @@ export class SearchService {
 
   sendQuery(qry: QueryOptionsData) {
     this.wsService.sendMessage("query", qry);
-    console.log(qry);
   }
   sendCurrentQuery() {
     this.sendQuery(this.queryOptions);
@@ -88,7 +84,7 @@ export class SearchService {
 
   pushSortingOptions(opts: QuerySortingOptionsData) {
     this.queryOptions.sorting = opts;
-    console.log(this.queryOptions);
+    this.selService.setPage(1);
     this.sendCurrentQuery();
   }
 }
