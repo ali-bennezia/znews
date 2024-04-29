@@ -12,6 +12,7 @@ import { NewsComponent } from "./display/news/news/news.component";
 import { SortMenuComponent } from "./display/news/sort-menu/sort-menu.component";
 import { DropdownButtonComponent } from "./utils/dropdown-button/dropdown-button.component";
 import { PaginationBarComponent } from "./utils/pagination-bar/pagination-bar.component";
+import { GithubLinkComponent } from './utils/github-link/github-link.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { PaginationBarComponent } from "./utils/pagination-bar/pagination-bar.co
     SortMenuComponent,
     DropdownButtonComponent,
     PaginationBarComponent,
+    GithubLinkComponent,
   ],
   imports: [BrowserModule, AppRouterModule],
   providers: [],

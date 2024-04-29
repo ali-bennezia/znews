@@ -231,18 +231,6 @@ async function getNewsAsync(opts) {
   }
 
   let cnt = options.count ? options.count : 20;
-  /*
-  let news = await newsModel
-    .find({
-      ...findFilter,
-    })
-    .sort(sortFilter)
-    .skip(cnt * options.page)
-    .limit(cnt)
-    .exec();*/
-
-  console.log(findFilter);
-  console.log(sortFilter);
 
   let news2 = await newsModel.paginate(
     { ...findFilter },

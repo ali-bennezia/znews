@@ -1,0 +1,11 @@
+a > span > svg {
+  scale: 1.1;
+  color: white;
+  transition: 100ms scale ease-in;
+}
+
+a:hover > span > svg {
+  scale: 1.4;
+  cursor: pointer;
+  transition: 100ms scale ease-out;
+}
