@@ -7,7 +7,15 @@ import { Observable, Subject } from "rxjs";
 })
 export class SelectionService {
   onPageClickSource: Subject<PointerEvent> = new Subject();
-  onPageClick$ = this.onPageClickSource.asObservable();
+  onPageClick$: Observable<PointerEvent> =
+    this.onPageClickSource.asObservable();
+
+  onPaginationSource: Subject<number> = new Subject();
+  onPagination$: Observable<number> = this.onPaginationSource.asObservable();
+
+  setPage(i: number) {
+    this.onPaginationSource.next(i);
+  }
 
   constructor() {}
 }

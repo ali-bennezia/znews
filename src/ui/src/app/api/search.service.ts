@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 
-import { Observable, Subject } from "rxjs";
+import { Observable, Subject, Subscription } from "rxjs";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { WebSocketService } from "./web-socket.service";
 
@@ -11,6 +11,7 @@ import { NetworkData } from "./interfaces/network-data";
 import { QuerySortingOptionsData } from "./interfaces/query-sorting-options-data";
 import { QueryOptionsData } from "./interfaces/query-options-data";
 import { query } from "@angular/animations";
+import { SelectionService } from "../interaction/selection.service";
 
 @Injectable({
   providedIn: "root",
@@ -34,7 +35,6 @@ export class SearchService {
 
   setPage(val: number) {
     this.queryOptions.page = val;
-    console.log(this.queryOptions);
 
     this.sendCurrentQuery();
   }
@@ -44,13 +44,22 @@ export class SearchService {
     .asObservable()
     .pipe(distinctUntilChanged(), debounceTime(300));
 
-  constructor(private wsService: WebSocketService) {
-    this.onQuery$.subscribe((qry) => this.onSearchQuery(qry));
+  constructor(
+    private wsService: WebSocketService,
+    private selService: SelectionService
+  ) {
+    this.onQuery$.subscribe((qry) => {
+      this.selService.setPage(1);
+      this.onSearchQuery(qry);
+    });
     this.wsService.onMessageReceived$.subscribe((dat: NetworkData) => {
       this.onMessageReceived(dat.socket, dat.message);
     });
     this.wsService.onConnected$.subscribe((sck) => {
       this.sendQuery(this.queryOptions);
+    });
+    this.selService.onPagination$.subscribe((p) => {
+      this.setPage(p);
     });
   }
 
@@ -71,6 +80,7 @@ export class SearchService {
 
   sendQuery(qry: QueryOptionsData) {
     this.wsService.sendMessage("query", qry);
+    console.log(qry);
   }
   sendCurrentQuery() {
     this.sendQuery(this.queryOptions);
